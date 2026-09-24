@@ -9,9 +9,11 @@ export const sections = [
   { id: 'contact', label: 'Contact' },
 ] as const
 
+export const navSections = sections.filter((section) => section.id !== 'hero')
+
 export const profile = {
   name: 'Kushi Santosh Khandoji',
-  shortName: 'Kushi Khandoji',
+  mark: 'KK',
   degreeLine: 'M.S. Computer Science, George Washington University',
   studentAthleteLine: 'Student-athlete',
   resumeHref: '/Kushi_Khandoji_Resume_Latest.pdf',
@@ -59,19 +61,51 @@ export const experience = [
 
 export const projects = [
   {
+    name: 'Research Paper Q&A Assistant',
+    summary:
+      'Question answering across research papers, with citation-backed answers drawn from the documents.',
+    tools: ['FastAPI', 'React', 'Gemini', 'LangChain', 'ChromaDB'],
+    points: [
+      'Built a RAG-based question-answering system for research papers using Gemini, embeddings, and vector search to support conversational querying across multiple documents.',
+      'Engineered an end-to-end pipeline for PDF ingestion, semantic chunking, metadata-aware retrieval, and citation-backed answer generation.',
+    ],
+  },
+  {
     name: 'Multi-Objective Carbon-Aware Logistics Routing',
-    tools: 'Python, PyTorch, PPO, DQN, OSMnx',
+    summary:
+      'Freight routing that balances travel time and CO2 emissions, reducing estimated emissions by 20%.',
+    tools: ['Python', 'PyTorch', 'PPO', 'DQN', 'OSMnx'],
     points: [
       'Built a multi-objective reinforcement learning system using PPO, Double DQN, and Weighted A* to optimize freight routing while balancing travel time and CO2 emissions.',
       'Integrated real-world transportation, elevation, and emissions datasets to train and evaluate routing agents, reducing estimated emissions by 20% while adding only 5–10 minutes to ETA.',
     ],
   },
   {
-    name: 'Research Paper Q&A Assistant',
-    tools: 'FastAPI, React, Gemini, LangChain, ChromaDB',
+    name: 'Flight Price Tracker',
+    summary:
+      'A flight price aggregator on AWS that tracks fares across airlines and dates, with alerts and trend charts.',
+    tools: ['React', 'FastAPI', 'AWS', 'Docker', 'PostgreSQL', 'Chart.js'],
     points: [
-      'Built a RAG-based question-answering system for research papers using Gemini, embeddings, and vector search to support conversational querying across multiple documents.',
-      'Engineered an end-to-end pipeline for PDF ingestion, semantic chunking, metadata-aware retrieval, and citation-backed answer generation.',
+      'Developed and deployed a full-stack flight aggregator on AWS (EC2, S3) with a Dockerized FastAPI backend and React frontend, integrating third-party APIs to track prices across multiple airlines and dates.',
+      'Implemented real-time price tracking, custom alerts, and interactive trend visualizations with Chart.js to help users identify cost-saving booking opportunities.',
+    ],
+  },
+  {
+    name: 'Micro Marketplace',
+    summary:
+      'E-commerce services for products, orders, inventory, and notifications, with event-driven updates and role-based authentication.',
+    tools: [
+      'Java',
+      'Spring Boot',
+      'Kafka',
+      'Spring Cloud Gateway',
+      'Keycloak',
+      'MySQL',
+      'MongoDB',
+    ],
+    points: [
+      'Designed and developed a scalable e-commerce microservices platform with modular Product, Order, Inventory, and Notification services, supporting real-time order processing and inventory updates through event-driven communication.',
+      'Implemented secure role-based authentication and system monitoring dashboards to ensure service reliability and performance.',
     ],
   },
 ]
@@ -95,22 +129,70 @@ export const education = [
   },
 ]
 
-export const skillGroups = [
-  {
-    label: 'Languages',
-    items: 'Python, Java, Kotlin, SQL, JavaScript',
-  },
-  {
-    label: 'AI/ML',
-    items: 'LLMs, AI Agents, Prompt Engineering, RAG, LangChain, PyTorch, TensorFlow, NumPy',
-  },
-  {
-    label: 'Frameworks and tools',
-    items: 'React, Next.js, Django, AWS, ChromaDB, PostgreSQL, REST APIs, Git',
-  },
-]
+export const skillRows = [
+  [
+    'Python',
+    'Java',
+    'Kotlin',
+    'JavaScript',
+    'SQL',
+    'Bash',
+    'Git',
+    'React',
+    'Next.js',
+    'Chart.js',
+    'Docker',
+    'REST APIs',
+  ],
+  [
+    'Django',
+    'FastAPI',
+    'Spring Boot',
+    'Spring Cloud Gateway',
+    'Kafka',
+    'PostgreSQL',
+    'MySQL',
+    'MongoDB',
+    'Keycloak',
+    'Role-Based Authentication',
+    'AWS',
+    'EC2',
+    'S3',
+  ],
+  [
+    'PyTorch',
+    'TensorFlow',
+    'NumPy',
+    'LangChain',
+    'Gemini',
+    'Copilot Studio',
+    'Box AI',
+    'ChromaDB',
+    'LLMs',
+    'AI Agents',
+    'Prompt Engineering',
+    'RAG',
+    'Agent Orchestration',
+  ],
+  [
+    'Reinforcement Learning',
+    'Double DQN',
+    'Weighted A*',
+    'OPC UA',
+    'Data Mining',
+    'Model Training',
+    'Document Extraction',
+    'Similarity Search',
+    'Semantic Chunking',
+    'Human-in-the-Loop Review',
+    'Metadata-Aware Retrieval',
+    'Embedding-Based Feature Representations',
+  ],
+] as const
 
 export const contact = {
   email: 'kushi.s.khandoji@gmail.com',
   location: 'Washington, DC',
+  linkedin: 'https://www.linkedin.com/in/kushi-santosh-khandoji/',
+  github: 'https://github.com/kushisantu',
 }
