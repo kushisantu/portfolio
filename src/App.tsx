@@ -1,55 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-
-const sections = [
-  {
-    id: 'hero',
-    label: 'Hero',
-    heading: 'Kushi Santosh Khandoji',
-    text: 'M.S. Computer Science, George Washington University',
-  },
-  {
-    id: 'about',
-    label: 'About',
-    heading: 'About',
-    text: 'A short introduction will go here.',
-  },
-  {
-    id: 'experience',
-    label: 'Experience',
-    heading: 'Experience',
-    text: 'Experience entries will go here.',
-  },
-  {
-    id: 'projects',
-    label: 'Projects',
-    heading: 'Projects',
-    text: 'Project entries will go here.',
-  },
-  {
-    id: 'education',
-    label: 'Education',
-    heading: 'Education',
-    text: 'Education entries will go here.',
-  },
-  {
-    id: 'athletics',
-    label: 'Athletics',
-    heading: 'Athletics',
-    text: 'Athletics entries will go here.',
-  },
-  {
-    id: 'skills',
-    label: 'Skills',
-    heading: 'Skills',
-    text: 'Skills will go here.',
-  },
-  {
-    id: 'contact',
-    label: 'Contact',
-    heading: 'Contact',
-    text: 'Contact details will go here.',
-  },
-] as const
+import {
+  about,
+  contact,
+  education,
+  experience,
+  profile,
+  projects,
+  sections,
+  skillGroups,
+} from './data/content.ts'
 
 type SectionId = (typeof sections)[number]['id']
 
@@ -60,6 +19,10 @@ function markerLine() {
 }
 
 function sectionAtMarker(): SectionId {
+  const atEnd =
+    window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4
+  if (atEnd) return sections[sections.length - 1].id
+
   const line = markerLine()
   let current: SectionId = sections[0].id
   for (const section of sections) {
@@ -119,7 +82,7 @@ function App() {
       >
         <div className="header-bar">
           <a className="brand" href="#hero" onClick={() => selectSection('hero')}>
-            Kushi Khandoji
+            {profile.shortName}
           </a>
           <button
             type="button"
@@ -148,15 +111,94 @@ function App() {
         </nav>
       </header>
 
-      {sections.map((section) => {
-        const Heading = section.id === 'hero' ? 'h1' : 'h2'
-        return (
-          <section id={section.id} key={section.id}>
-            <Heading>{section.heading}</Heading>
-            <p>{section.text}</p>
-          </section>
-        )
-      })}
+      <section id="hero">
+        <h1>{profile.name}</h1>
+        <p>{profile.degreeLine}</p>
+        <p>{profile.studentAthleteLine}</p>
+        <p>
+          <a className="text-link" href={profile.resumeHref} download>
+            {profile.resumeLabel}
+          </a>
+        </p>
+      </section>
+
+      <section id="about">
+        <h2>About</h2>
+        <p>{about}</p>
+      </section>
+
+      <section id="experience">
+        <h2>Experience</h2>
+        {experience.map((job) => (
+          <article className="entry" key={job.role}>
+            <h3>{job.role}</h3>
+            <p className="meta">
+              {job.org} · {job.dates}
+            </p>
+            <p className="meta">{job.tools}</p>
+            <ul>
+              {job.points.map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </section>
+
+      <section id="projects">
+        <h2>Projects</h2>
+        {projects.map((project) => (
+          <article className="entry" key={project.name}>
+            <h3>{project.name}</h3>
+            <p className="meta">{project.tools}</p>
+            <ul>
+              {project.points.map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </section>
+
+      <section id="education">
+        <h2>Education</h2>
+        {education.map((school) => (
+          <article className="entry" key={school.school}>
+            <h3>{school.school}</h3>
+            <p className="meta">
+              {school.credential} · {school.dates}
+            </p>
+            <p>
+              {school.place}. {school.detail}
+            </p>
+            {school.coursework ? <p>Coursework: {school.coursework}</p> : null}
+          </article>
+        ))}
+      </section>
+
+      <section id="athletics">
+        <h2>Athletics</h2>
+        <h3>Certifications</h3>
+      </section>
+
+      <section id="skills">
+        <h2>Skills</h2>
+        {skillGroups.map((group) => (
+          <p key={group.label}>
+            <span className="label">{group.label}.</span> {group.items}
+          </p>
+        ))}
+      </section>
+
+      <section id="contact">
+        <h2>Contact</h2>
+        <p>{contact.location}</p>
+        <p>
+          <a className="text-link" href={`mailto:${contact.email}`}>
+            {contact.email}
+          </a>
+        </p>
+      </section>
     </>
   )
 }
