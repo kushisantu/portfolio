@@ -1,0 +1,36 @@
+:root {
+  color-scheme: dark;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  background: #0e0f12;
+  color: #f3f4f6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 2rem;
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+p {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 1.125rem;
+}
