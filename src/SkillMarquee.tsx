@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import type { SimpleIcon } from 'simple-icons'
 import {
   siApachekafka,
@@ -26,7 +26,7 @@ import {
   siSpringboot,
   siTensorflow,
 } from 'simple-icons'
-import { skillRows } from './data/content.ts'
+import { skillGroups, skillRows } from './data/content.ts'
 
 const brandIcons: Record<string, SimpleIcon> = {
   Python: siPython,
@@ -162,33 +162,94 @@ function SkillLogo({ name }: { name: string }) {
   )
 }
 
-function SkillChip({ name }: { name: string }) {
-  return (
-    <span className="skill-chip">
+type SkillBox = {
+  top: number
+  left: number
+  width: number
+  above: boolean
+}
+
+function placePop(anchor: HTMLElement, node: HTMLElement): SkillBox {
+  const rect = anchor.getBoundingClientRect()
+  const gap = 10
+  const edge = 8
+  const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0
+  const width = Math.min(400, window.innerWidth - edge * 2)
+  let left = rect.left + rect.width / 2 - width / 2
+  left = Math.max(edge, Math.min(left, window.innerWidth - width - edge))
+  const height = node.offsetHeight
+  const spaceBelow = window.innerHeight - rect.bottom - gap - edge
+  const spaceAbove = rect.top - headerBottom - gap
+  const above = spaceBelow < height && spaceAbove > spaceBelow
+  let top = above ? rect.top - gap - height : rect.bottom + gap
+  if (top < headerBottom + 4) top = headerBottom + 4
+  if (top + height > window.innerHeight - edge) top = Math.max(headerBottom + 4, window.innerHeight - edge - height)
+  return { top, left, width, above }
+}
+
+function SkillChip({
+  name,
+  onEnter,
+  onLeave,
+  tabIndex,
+}: {
+  name: string
+  onEnter?: (name: string, el: HTMLButtonElement) => void
+  onLeave?: () => void
+  tabIndex?: number
+}) {
+  const content = (
+    <>
       <SkillLogo name={name} />
       <span>{name}</span>
-    </span>
+    </>
+  )
+  if (!onEnter) {
+    return <span className="skill-chip">{content}</span>
+  }
+  return (
+    <button
+      type="button"
+      className="skill-chip"
+      tabIndex={tabIndex}
+      onMouseEnter={(event) => onEnter(name, event.currentTarget)}
+      onMouseLeave={onLeave}
+      onFocus={(event) => onEnter(name, event.currentTarget)}
+      onBlur={onLeave}
+    >
+      {content}
+    </button>
   )
 }
 
 function SkillRow({
   names,
   direction,
+  onEnter,
+  onLeave,
 }: {
   names: readonly string[]
   direction: 'left' | 'right'
+  onEnter: (name: string, el: HTMLButtonElement) => void
+  onLeave: () => void
 }) {
   return (
     <div className={`skill-row skill-row-${direction}`}>
       <div className="skill-track">
         <div className="skill-group">
           {names.map((name) => (
-            <SkillChip key={name} name={name} />
+            <SkillChip key={name} name={name} onEnter={onEnter} onLeave={onLeave} />
           ))}
         </div>
         <div className="skill-group" aria-hidden="true">
           {names.map((name) => (
-            <SkillChip key={`${name}-copy`} name={name} />
+            <SkillChip
+              key={`${name}-copy`}
+              name={name}
+              tabIndex={-1}
+              onEnter={onEnter}
+              onLeave={onLeave}
+            />
           ))}
         </div>
       </div>
@@ -197,15 +258,127 @@ function SkillRow({
 }
 
 export function SkillMarquee() {
+  const [pop, setPop] = useState<{ name: string } | null>(null)
+  const [open, setOpen] = useState(false)
+  const [box, setBox] = useState<SkillBox>({ top: 0, left: 8, width: 400, above: false })
+  const anchorRef = useRef<HTMLElement | null>(null)
+  const popRef = useRef<HTMLDivElement>(null)
+  const hideTimer = useRef<number | null>(null)
+  const unmountTimer = useRef<number | null>(null)
+  const blockHover = useRef(false)
+  const scrollTick = useRef(false)
+
+  function clearTimers() {
+    if (hideTimer.current) window.clearTimeout(hideTimer.current)
+    if (unmountTimer.current) window.clearTimeout(unmountTimer.current)
+    hideTimer.current = null
+    unmountTimer.current = null
+  }
+
+  function showPop(name: string, el: HTMLButtonElement) {
+    if (blockHover.current) return
+    clearTimers()
+    anchorRef.current = el
+    setPop({ name })
+    setOpen(false)
+  }
+
+  function holdPop() {
+    clearTimers()
+    setOpen(true)
+  }
+
+  function hidePop() {
+    clearTimers()
+    hideTimer.current = window.setTimeout(() => {
+      setOpen(false)
+      unmountTimer.current = window.setTimeout(() => setPop(null), 340)
+    }, 90)
+  }
+
+  useLayoutEffect(() => {
+    const anchor = anchorRef.current
+    const node = popRef.current
+    if (!pop || !anchor || !node) return
+    setBox(placePop(anchor, node))
+    const frame = window.requestAnimationFrame(() => setOpen(true))
+    return () => window.cancelAnimationFrame(frame)
+  }, [pop])
+
+  useEffect(() => {
+    function allowHover() {
+      if (scrollTick.current) {
+        scrollTick.current = false
+        return
+      }
+      blockHover.current = false
+    }
+    window.addEventListener('mousemove', allowHover)
+    return () => window.removeEventListener('mousemove', allowHover)
+  }, [])
+
+  useEffect(() => {
+    if (!pop) return
+    function closeOnScroll() {
+      blockHover.current = true
+      scrollTick.current = true
+      if (hideTimer.current) window.clearTimeout(hideTimer.current)
+      hideTimer.current = null
+      setOpen(false)
+      if (unmountTimer.current) return
+      unmountTimer.current = window.setTimeout(() => {
+        unmountTimer.current = null
+        setPop(null)
+      }, 340)
+    }
+    window.addEventListener('scroll', closeOnScroll, true)
+    return () => window.removeEventListener('scroll', closeOnScroll, true)
+  }, [pop])
+
+  useEffect(() => clearTimers, [])
+
+  const groups = pop
+    ? skillGroups.filter((group) => (group.skills as readonly string[]).includes(pop.name))
+    : []
+
   return (
-    <div className="skill-marquee" aria-label="Skills">
-      {skillRows.map((names, index) => (
-        <SkillRow
-          key={names[0]}
-          names={names}
-          direction={index % 2 === 0 ? 'left' : 'right'}
-        />
-      ))}
+    <div className="skills-block">
+      <div className="skill-marquee" aria-label="Skills">
+        {skillRows.map((names, index) => (
+          <SkillRow
+            key={names[0]}
+            names={names}
+            direction={index % 2 === 0 ? 'left' : 'right'}
+            onEnter={showPop}
+            onLeave={hidePop}
+          />
+        ))}
+      </div>
+      {pop ? (
+        <div
+          ref={popRef}
+          className={`skill-pop${open ? ' is-open' : ''}${box.above ? ' is-above' : ''}`}
+          style={{
+            top: box.top,
+            left: box.left,
+            width: box.width,
+          }}
+          role="tooltip"
+          onMouseEnter={holdPop}
+          onMouseLeave={hidePop}
+        >
+          {groups.map((group) => (
+            <section className="skill-category" key={group.name}>
+              <h3>{group.name}</h3>
+              <div className="skill-category-chips">
+                {group.skills.map((name) => (
+                  <SkillChip key={name} name={name} />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }

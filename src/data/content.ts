@@ -245,6 +245,60 @@ export const skillRows = [
   ],
 ] as const
 
+export const skillGroups = [
+  {
+    name: 'Languages',
+    skills: ['Python', 'Java', 'Kotlin', 'JavaScript', 'SQL', 'Bash'],
+  },
+  {
+    name: 'Frontend',
+    skills: ['React', 'Next.js', 'Chart.js'],
+  },
+  {
+    name: 'Backend',
+    skills: ['Django', 'FastAPI', 'Spring Boot', 'Spring Cloud Gateway', 'REST APIs'],
+  },
+  {
+    name: 'Libraries',
+    skills: ['PyTorch', 'TensorFlow', 'NumPy', 'LangChain'],
+  },
+  {
+    name: 'Databases',
+    skills: ['PostgreSQL', 'MySQL', 'MongoDB', 'ChromaDB'],
+  },
+  {
+    name: 'AI Tools',
+    skills: ['Gemini', 'Copilot Studio', 'Box AI'],
+  },
+  {
+    name: 'AI Systems',
+    skills: ['LLMs', 'AI Agents', 'Prompt Engineering', 'RAG', 'Agent Orchestration'],
+  },
+  {
+    name: 'Document AI',
+    skills: [
+      'Document Extraction',
+      'Semantic Chunking',
+      'Similarity Search',
+      'Metadata-Aware Retrieval',
+      'Embedding-Based Feature Representations',
+      'Human-in-the-Loop Review',
+    ],
+  },
+  {
+    name: 'Machine Learning',
+    skills: ['Reinforcement Learning', 'Double DQN', 'Weighted A*', 'Data Mining', 'Model Training'],
+  },
+  {
+    name: 'Cloud & DevOps',
+    skills: ['AWS', 'EC2', 'S3', 'Docker', 'Git'],
+  },
+  {
+    name: 'Infra/Messaging/Auth',
+    skills: ['Kafka', 'Keycloak', 'Role-Based Authentication', 'OPC UA'],
+  },
+] as const
+
 export const contact = {
   email: 'kushi.s.khandoji@gmail.com',
   location: 'Washington, DC',
