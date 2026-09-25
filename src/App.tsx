@@ -45,51 +45,52 @@ function ExperienceTimeline() {
   useLayoutEffect(() => {
     const track = trackRef.current
     if (!track) return
+    const node = track
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    function measure() {
-      const dots = track.querySelectorAll<HTMLElement>('.timeline-dot')
+    function measure(node: HTMLDivElement) {
+      const dots = node.querySelectorAll<HTMLElement>('.timeline-dot')
       if (dots.length === 0) return
-      const trackRect = track.getBoundingClientRect()
+      const trackRect = node.getBoundingClientRect()
       const first = dots[0].getBoundingClientRect()
       const last = dots[dots.length - 1].getBoundingClientRect()
       const top = first.top + first.height / 2 - trackRect.top
       const height = last.top + last.height / 2 - trackRect.top - top
-      track.style.setProperty('--rail-top', `${top}px`)
-      track.style.setProperty('--rail-height', `${height}px`)
-      if (reduce) track.style.setProperty('--drawn', `${height}px`)
+      node.style.setProperty('--rail-top', `${top}px`)
+      node.style.setProperty('--rail-height', `${height}px`)
+      if (reduce) node.style.setProperty('--drawn', `${height}px`)
     }
 
-    function draw() {
+    function draw(node: HTMLDivElement) {
       if (reduce) return
-      const dots = track.querySelectorAll<HTMLElement>('.timeline-dot')
+      const dots = node.querySelectorAll<HTMLElement>('.timeline-dot')
       if (dots.length === 0) return
-      const trackRect = track.getBoundingClientRect()
+      const trackRect = node.getBoundingClientRect()
       const first = dots[0].getBoundingClientRect()
       const last = dots[dots.length - 1].getBoundingClientRect()
       const top = first.top + first.height / 2 - trackRect.top
       const end = last.top + last.height / 2 - trackRect.top
       const reach = window.innerHeight * 0.62 - trackRect.top
       const drawn = Math.min(Math.max(end - top, 0), Math.max(0, reach - top))
-      track.style.setProperty('--drawn', `${drawn}px`)
+      node.style.setProperty('--drawn', `${drawn}px`)
     }
 
-    measure()
-    draw()
+    measure(node)
+    draw(node)
 
     const resizeObserver = new ResizeObserver(() => {
-      measure()
-      draw()
+      measure(node)
+      draw(node)
     })
-    resizeObserver.observe(track)
+    resizeObserver.observe(node)
 
     if (reduce) {
       setShown(experience.map(() => true))
       return () => resizeObserver.disconnect()
     }
 
-    const items = [...track.querySelectorAll<HTMLElement>('.timeline-item')]
+    const items = [...node.querySelectorAll<HTMLElement>('.timeline-item')]
     const observer = new IntersectionObserver(
       (entries) => {
         setShown((current) => {
@@ -108,20 +109,19 @@ function ExperienceTimeline() {
       },
       { threshold: 0.22, rootMargin: '0px 0px -6% 0px' },
     )
-    function onResize() {
-      measure()
-      draw()
+    function onScroll() {
+      draw(node)
     }
 
     items.forEach((item) => observer.observe(item))
-    window.addEventListener('scroll', draw, { passive: true })
-    window.addEventListener('resize', onResize)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
 
     return () => {
       resizeObserver.disconnect()
       observer.disconnect()
-      window.removeEventListener('scroll', draw)
-      window.removeEventListener('resize', onResize)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
     }
   }, [])
 
