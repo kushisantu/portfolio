@@ -4,7 +4,7 @@ export const sections = [
   { id: 'experience', label: 'Experience' },
   { id: 'projects', label: 'Projects' },
   { id: 'education', label: 'Education' },
-  { id: 'athletics', label: 'Athletics' },
+  { id: 'athletics', label: 'Honors' },
   { id: 'skills', label: 'Skills' },
   { id: 'contact', label: 'Contact' },
 ] as const
@@ -126,6 +126,61 @@ export const education = [
     dates: 'Completed May 2025',
     detail: 'GPA 4.0/4.0 · Undergraduate Technology Award',
     coursework: '',
+  },
+]
+
+export const honors = [
+  {
+    label: 'CACC Conference Champions',
+    when: '2023, 2024',
+    detail: "Central Atlantic Collegiate Conference Women's Tennis Champions.",
+  },
+  {
+    label: 'NCAA Regional Tournament',
+    when: '2024, 2025',
+    detail: "NCAA Division II Women's Tennis Regional Tournament (Top 32).",
+  },
+  {
+    label: 'CACC First-Team All-Conference',
+    when: '2024',
+    detail: "Named to CACC's First-Team Singles with a 12-0 record at #4 singles.",
+  },
+  {
+    label: 'CACC Second-Team All-Conference',
+    when: '2023',
+    detail: "Named to CACC's Second-Team Singles with a 6-4 record at #1 singles.",
+  },
+  {
+    label: 'ITA Scholar-Athlete',
+    when: '2023–2025',
+    detail:
+      'Intercollegiate Tennis Association honor for student-athletes with a 3.5 GPA or higher.',
+  },
+  {
+    label: 'CSC All-District Team',
+    when: '2023',
+    detail:
+      'College Sports Communicators pick top student-athletes for exceptional performance in the classroom and on the court.',
+  },
+  {
+    label: "Dean's List",
+    when: 'Every semester',
+    detail: 'Recognized for strong academic standing every undergraduate semester.',
+  },
+  {
+    label: 'Undergraduate Technology Award',
+    when: '2025',
+    detail: 'University award for top undergraduate student in current Computer Science cohort.',
+  },
+  {
+    label: 'Calculus Award',
+    when: '2023',
+    detail: 'University award for top calculus student.',
+  },
+  {
+    label: 'Student Commencement Speaker',
+    when: '',
+    detail: 'Selected to speak at the Wilmington University Commencement Ceremony.',
   },
 ]
 

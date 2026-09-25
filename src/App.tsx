@@ -4,6 +4,7 @@ import {
   contact,
   education,
   experience,
+  honors,
   navSections,
   profile,
   projects,
@@ -261,8 +262,23 @@ function App() {
       </section>
 
       <section id="athletics">
-        <h2>Athletics</h2>
-        <h3>Certifications</h3>
+        <h2>Honors</h2>
+        <p className="honor-lead">NCAA Division II women's tennis and academic honors.</p>
+        <div className="honor-board">
+          {[honors.slice(0, Math.ceil(honors.length / 2)), honors.slice(Math.ceil(honors.length / 2))].map(
+            (column) => (
+              <ul className="honor-list" key={column[0].label}>
+                {column.map((item) => (
+                  <li key={item.label} tabIndex={0}>
+                    <span className="honor-label">{item.label}</span>
+                    {item.when ? <span className="honor-when">{item.when}</span> : null}
+                    <span className="honor-tip">{item.detail}</span>
+                  </li>
+                ))}
+              </ul>
+            ),
+          )}
+        </div>
       </section>
 
       <section id="skills">

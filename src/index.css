@@ -185,6 +185,7 @@ li {
 p + p,
 .entry,
 .project-grid,
+.honor-board,
 ul {
   margin-top: 0.75rem;
 }
@@ -194,6 +195,89 @@ ul {
   grid-template-columns: 1fr 1fr;
   gap: 0.9rem;
   align-items: stretch;
+}
+
+.honor-lead {
+  margin: 0.15rem 0 0;
+  color: #c5c8d0;
+}
+
+.honor-board {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  border: 1px solid #2e313a;
+  border-radius: 14px;
+  background: #16181e;
+}
+
+.honor-board::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 2px;
+  background: linear-gradient(90deg, var(--pink), var(--purple) 58%, var(--blue));
+}
+
+.honor-list {
+  margin: 0;
+  padding: 0.55rem 1rem 0.3rem;
+  list-style: none;
+}
+
+.honor-list + .honor-list {
+  border-left: 1px solid var(--line);
+}
+
+.honor-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+  max-width: none;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--line);
+  color: #f3f4f6;
+  cursor: help;
+  outline: none;
+}
+
+.honor-list li:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.honor-label {
+  border-bottom: 1px dotted rgba(255, 61, 138, 0.45);
+}
+
+.honor-when {
+  flex: none;
+  margin-left: auto;
+  color: var(--pink);
+  font-size: 0.92rem;
+}
+
+.honor-tip {
+  flex: 1 0 100%;
+  max-height: 0;
+  overflow: hidden;
+  color: #b8bcc6;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  opacity: 0;
+}
+
+.honor-list li:hover .honor-tip,
+.honor-list li:focus-visible .honor-tip {
+  max-height: 4.5rem;
+  margin-top: 0.15rem;
+  opacity: 1;
 }
 
 .project-card,
@@ -543,8 +627,14 @@ ul {
     padding-inline: 1rem;
   }
 
-  .project-grid {
+  .project-grid,
+  .honor-board {
     grid-template-columns: 1fr;
+  }
+
+  .honor-list + .honor-list {
+    border-top: 1px solid var(--line);
+    border-left: 0;
   }
 
   .skill-marquee {

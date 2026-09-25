@@ -61,7 +61,6 @@ const marks: Record<string, string> = {
     'M8.2 7.2 3.5 12l4.7 4.8 1.5-1.5L6.5 12l3.2-3.3-1.5-1.5zm7.6 0-1.5 1.5 3.2 3.3-3.2 3.3 1.5 1.5 4.7-4.8-4.7-4.8z',
   'Role-Based Authentication':
     'M12 2 5 5v6.2c0 4.3 2.9 8.2 7 9.8 4.1-1.6 7-5.5 7-9.8V5L12 2zm-1.1 11.2-2.2-2.2 1.2-1.2 1 1 2.6-2.6 1.2 1.2-3.8 3.8z',
-  AWS: 'M6 16.4c2.4 1.5 5 2.2 7.6 2.2 1.8 0 3.6-.3 5-.9l.6 1.5c-1.7.8-3.8 1.2-5.8 1.2-3 0-6-.8-8.6-2.4L6 16.4zM7 8.2h2.1l2.4 6.2L14 8.2h2.1L12.6 17h-2.2L7 8.2z',
   S3: 'M7 7h10l1.2 12H5.8L7 7zm1.2-3h7.6v2H8.2V4z',
   MySQL:
     'M12 3.2c2.6.1 4.8 1.6 5.8 3.8.5 1.1.6 2.3.3 3.4-1.2.5-2.1 1.5-2.4 2.8.3.5.4 1.1.4 1.7 0 2.3-2 4.1-4.4 4.1-1.3 0-2.5-.6-3.3-1.5-.6.4-1.3.6-2 .6-2.1 0-3.8-1.6-3.9-3.6-.2-1.2.8-2.4 2.2-2.7-.1-1.2.3-2.4 1.2-3.3C7.2 5.6 9.4 3.3 12 3.2z',
@@ -104,6 +103,37 @@ function SkillLogo({ name }: { name: string }) {
   let graphic: ReactNode = null
   if (icon) {
     graphic = <path d={icon.path} fill="currentColor" />
+  } else if (name === 'AWS') {
+    graphic = (
+      <>
+        <text
+          x="12"
+          y="11"
+          textAnchor="middle"
+          fill="currentColor"
+          fontSize="8"
+          fontWeight="700"
+          fontFamily="system-ui, sans-serif"
+        >
+          aws
+        </text>
+        <path
+          d="M4.2 15.2c3.4 2.5 12.2 2.5 15.6 0"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+        <path
+          d="M17.4 13.6 20.2 15.1 17.8 17.4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </>
+    )
   } else if (name === 'EC2') {
     graphic = (
       <path
