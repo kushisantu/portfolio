@@ -26,7 +26,8 @@ export const about =
 export const experience = [
   {
     role: 'Student AI Solutions Specialist',
-    org: 'George Washington University — GW IT',
+    org: 'George Washington University – GW IT',
+    place: 'Washington, DC',
     dates: 'July 2026 – Present',
     tools: 'LLMs, AI Agents, Prompt Engineering, RAG, Agent Orchestration',
     points: [
@@ -38,7 +39,7 @@ export const experience = [
   },
   {
     role: 'AI Engineer Intern',
-    org: 'Fintellix — G2 Risk Solutions',
+    org: 'Fintellix – G2 Risk Solutions',
     dates: 'June 2024 – December 2024',
     tools: 'Python, Java, ReactJS, JavaScript, Next.js, Django, NumPy, PostgreSQL',
     points: [

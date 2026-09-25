@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   about,
   contact,
@@ -37,6 +37,130 @@ function sectionAtMarker(): SectionId {
 }
 
 type Project = (typeof projects)[number]
+
+function ExperienceTimeline() {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [shown, setShown] = useState<boolean[]>(() => experience.map(() => false))
+
+  useLayoutEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    function measure() {
+      const dots = track.querySelectorAll<HTMLElement>('.timeline-dot')
+      if (dots.length === 0) return
+      const trackRect = track.getBoundingClientRect()
+      const first = dots[0].getBoundingClientRect()
+      const last = dots[dots.length - 1].getBoundingClientRect()
+      const top = first.top + first.height / 2 - trackRect.top
+      const height = last.top + last.height / 2 - trackRect.top - top
+      track.style.setProperty('--rail-top', `${top}px`)
+      track.style.setProperty('--rail-height', `${height}px`)
+      if (reduce) track.style.setProperty('--drawn', `${height}px`)
+    }
+
+    function draw() {
+      if (reduce) return
+      const dots = track.querySelectorAll<HTMLElement>('.timeline-dot')
+      if (dots.length === 0) return
+      const trackRect = track.getBoundingClientRect()
+      const first = dots[0].getBoundingClientRect()
+      const last = dots[dots.length - 1].getBoundingClientRect()
+      const top = first.top + first.height / 2 - trackRect.top
+      const end = last.top + last.height / 2 - trackRect.top
+      const reach = window.innerHeight * 0.62 - trackRect.top
+      const drawn = Math.min(Math.max(end - top, 0), Math.max(0, reach - top))
+      track.style.setProperty('--drawn', `${drawn}px`)
+    }
+
+    measure()
+    draw()
+
+    const resizeObserver = new ResizeObserver(() => {
+      measure()
+      draw()
+    })
+    resizeObserver.observe(track)
+
+    if (reduce) {
+      setShown(experience.map(() => true))
+      return () => resizeObserver.disconnect()
+    }
+
+    const items = [...track.querySelectorAll<HTMLElement>('.timeline-item')]
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setShown((current) => {
+          const next = [...current]
+          let changed = false
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue
+            const index = items.indexOf(entry.target as HTMLElement)
+            if (index >= 0 && !next[index]) {
+              next[index] = true
+              changed = true
+            }
+          }
+          return changed ? next : current
+        })
+      },
+      { threshold: 0.22, rootMargin: '0px 0px -6% 0px' },
+    )
+    function onResize() {
+      measure()
+      draw()
+    }
+
+    items.forEach((item) => observer.observe(item))
+    window.addEventListener('scroll', draw, { passive: true })
+    window.addEventListener('resize', onResize)
+
+    return () => {
+      resizeObserver.disconnect()
+      observer.disconnect()
+      window.removeEventListener('scroll', draw)
+      window.removeEventListener('resize', onResize)
+    }
+  }, [])
+
+  return (
+    <div className="timeline" ref={trackRef}>
+      <div className="timeline-rail" aria-hidden="true" />
+      <div className="timeline-line" aria-hidden="true" />
+      {experience.map((job, index) => {
+        const side = index % 2 === 0 ? 'is-left' : 'is-right'
+        const place = 'place' in job ? job.place : ''
+        return (
+          <article
+            className={`timeline-item ${side}${shown[index] ? ' is-shown' : ''}`}
+            key={job.role}
+          >
+            <div className="timeline-card">
+              <p className="timeline-dates">{job.dates}</p>
+              <h3>{job.role}</h3>
+              <p className="timeline-org">{job.org}</p>
+              {place ? <p className="timeline-place">{place}</p> : null}
+              <ul className="tech-list">
+                {job.tools.split(', ').map((tool) => (
+                  <li key={tool}>{tool}</li>
+                ))}
+              </ul>
+              <ul className="timeline-points">
+                {job.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            </div>
+            <span className="timeline-stem" aria-hidden="true" />
+            <span className="timeline-dot" aria-hidden="true" />
+          </article>
+        )
+      })}
+    </div>
+  )
+}
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -116,11 +240,16 @@ function App() {
           <button
             type="button"
             className="menu-button"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
             aria-controls="site-nav"
             onClick={() => setMenuOpen((open) => !open)}
           >
-            {menuOpen ? 'Close' : 'Menu'}
+            <span className="menu-icon" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
           </button>
         </div>
         <nav id="site-nav" aria-label="Page sections">
@@ -158,20 +287,7 @@ function App() {
 
       <section id="experience">
         <h2>Experience</h2>
-        {experience.map((job) => (
-          <article className="entry" key={job.role}>
-            <h3>{job.role}</h3>
-            <p className="meta">
-              {job.org} · {job.dates}
-            </p>
-            <p className="meta">{job.tools}</p>
-            <ul>
-              {job.points.map((point) => (
-                <li key={point}>{point}</li>
-              ))}
-            </ul>
-          </article>
-        ))}
+        <ExperienceTimeline />
       </section>
 
       <section id="projects">
