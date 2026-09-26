@@ -66,16 +66,6 @@ export const experience = [
 
 export const projects = [
   {
-    name: 'Research Paper Q&A Assistant',
-    summary:
-      'Question answering across research papers, with citation-backed answers drawn from the documents.',
-    tools: ['FastAPI', 'React', 'Gemini', 'LangChain', 'ChromaDB'],
-    points: [
-      'Built a RAG-based question-answering system for research papers using Gemini, embeddings, and vector search to support conversational querying across multiple documents.',
-      'Engineered an end-to-end pipeline for PDF ingestion, semantic chunking, metadata-aware retrieval, and citation-backed answer generation.',
-    ],
-  },
-  {
     name: 'Multi-Objective Carbon-Aware Logistics Routing',
     summary:
       'Freight routing that balances travel time and CO2 emissions, reducing estimated emissions by 20%.',
@@ -83,6 +73,16 @@ export const projects = [
     points: [
       'Built a multi-objective reinforcement learning system using PPO, Double DQN, and Weighted A* to optimize freight routing while balancing travel time and CO2 emissions.',
       'Integrated real-world transportation, elevation, and emissions datasets to train and evaluate routing agents, reducing estimated emissions by 20% while adding only 5–10 minutes to ETA.',
+    ],
+  },
+  {
+    name: 'Research Paper Q&A Assistant',
+    summary:
+      'Question answering across research papers, with citation-backed answers drawn from the documents.',
+    tools: ['FastAPI', 'React', 'Gemini', 'LangChain', 'ChromaDB'],
+    points: [
+      'Built a RAG-based question-answering system for research papers using Gemini, embeddings, and vector search to support conversational querying across multiple documents.',
+      'Engineered an end-to-end pipeline for PDF ingestion, semantic chunking, metadata-aware retrieval, and citation-backed answer generation.',
     ],
   },
   {
@@ -111,6 +111,16 @@ export const projects = [
     points: [
       'Designed and developed a scalable e-commerce microservices platform with modular Product, Order, Inventory, and Notification services, supporting real-time order processing and inventory updates through event-driven communication.',
       'Implemented secure role-based authentication and system monitoring dashboards to ensure service reliability and performance.',
+    ],
+  },
+  {
+    name: 'AI Resume Optimizer',
+    summary:
+      'An AI tool that checks resumes for ATS compliance, finds keyword gaps, and builds PDF and Word resumes.',
+    tools: ['Python', 'Streamlit', 'NLTK', 'spaCy'],
+    points: [
+      'Implemented an AI-powered tool in Python to analyze resumes for ATS compliance, implementing keyword gap detection, ATS scoring algorithms, and smart content suggestions.',
+      'Integrated ATS-friendly customizable resume templates and automated PDF/Word generation using Streamlit and spaCy, reducing resume preparation time by 50%.',
     ],
   },
 ]

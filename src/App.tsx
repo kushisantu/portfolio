@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { createElement, useEffect, useLayoutEffect, useRef, useState, type AllHTMLAttributes, type ChangeEvent, type CSSProperties, type FormEvent, type ReactNode } from 'react'
 import {
   contact,
   education,
@@ -42,6 +42,7 @@ type Project = (typeof projects)[number]
 
 function ExperienceTimeline() {
   const trackRef = useRef<HTMLDivElement>(null)
+  const [ready, setReady] = useState(false)
   const [shown, setShown] = useState<boolean[]>(() => experience.map(() => false))
 
   useLayoutEffect(() => {
@@ -88,47 +89,51 @@ function ExperienceTimeline() {
     resizeObserver.observe(node)
 
     if (reduce) {
+      setReady(true)
       setShown(experience.map(() => true))
       return () => resizeObserver.disconnect()
     }
 
     const items = [...node.querySelectorAll<HTMLElement>('.timeline-item')]
-    const observer = new IntersectionObserver(
-      (entries) => {
-        setShown((current) => {
-          const next = [...current]
-          let changed = false
-          for (const entry of entries) {
-            if (!entry.isIntersecting) continue
-            const index = items.indexOf(entry.target as HTMLElement)
-            if (index >= 0 && !next[index]) {
-              next[index] = true
-              changed = true
-            }
+
+    function revealItems() {
+      const visible = items.some(
+        (item) => item.getBoundingClientRect().top < window.innerHeight - 40,
+      )
+      if (!visible) return
+      setReady(true)
+      setShown((current) => {
+        const next = [...current]
+        let changed = false
+        items.forEach((item, index) => {
+          if (next[index]) return
+          if (item.getBoundingClientRect().top < window.innerHeight - 40) {
+            next[index] = true
+            changed = true
           }
-          return changed ? next : current
         })
-      },
-      { threshold: 0.22, rootMargin: '0px 0px -6% 0px' },
-    )
-    function onScroll() {
-      draw(node)
+        return changed ? next : current
+      })
     }
 
-    items.forEach((item) => observer.observe(item))
+    function onScroll() {
+      draw(node)
+      revealItems()
+    }
+
+    revealItems()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
 
     return () => {
       resizeObserver.disconnect()
-      observer.disconnect()
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
     }
   }, [])
 
   return (
-    <div className="timeline" ref={trackRef}>
+    <div className={ready ? 'timeline is-ready' : 'timeline'} ref={trackRef}>
       <div className="timeline-rail" aria-hidden="true" />
       <div className="timeline-line" aria-hidden="true" />
       {experience.map((job, index) => {
@@ -164,10 +169,66 @@ function ExperienceTimeline() {
   )
 }
 
+function useRise<T extends HTMLElement>() {
+  const ref = useRef<T>(null)
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    function check() {
+      if (reduce || element!.getBoundingClientRect().top < window.innerHeight - 24) {
+        setShown(true)
+        window.removeEventListener('scroll', check)
+      }
+    }
+
+    check()
+    window.addEventListener('scroll', check, { passive: true })
+    return () => window.removeEventListener('scroll', check)
+  }, [])
+
+  return { ref, shown }
+}
+
+function riseClass(className: string | undefined, shown: boolean) {
+  return [className, 'rise', shown ? 'is-in' : ''].filter(Boolean).join(' ')
+}
+
+function Rise({
+  as: Tag = 'div',
+  className,
+  delay,
+  style,
+  children,
+  ...rest
+}: {
+  as?: 'div' | 'h1' | 'h2' | 'p' | 'article' | 'button' | 'form'
+  delay?: string
+  className?: string
+  style?: CSSProperties
+  children?: ReactNode
+} & Omit<AllHTMLAttributes<HTMLElement>, 'className' | 'style'>) {
+  const { ref, shown } = useRise<HTMLElement>()
+  return createElement(
+    Tag,
+    {
+      ...rest,
+      ref,
+      className: riseClass(className, shown),
+      style: delay ? { ...style, transitionDelay: delay } : style,
+    },
+    children,
+  )
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeId, setActiveId] = useState<SectionId>('hero')
   const [openProject, setOpenProject] = useState<Project | null>(null)
+  const [showAllProjects, setShowAllProjects] = useState(false)
   const lockedId = useRef<SectionId | null>(null)
   const closeProjectRef = useRef<HTMLButtonElement>(null)
 
@@ -272,20 +333,24 @@ function App() {
       </header>
 
       <section id="hero">
-        <h1>{profile.name}</h1>
-        <p className="hero-tagline">{profile.tagline}</p>
+        <Rise as="h1">{profile.name}</Rise>
+        <Rise as="p" className="hero-tagline">
+          {profile.tagline}
+        </Rise>
         {profile.paragraphs.map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
+          <Rise as="p" key={paragraph}>
+            {paragraph}
+          </Rise>
         ))}
-        <div className="hero-seeking">
+        <Rise className="hero-seeking">
           <p className="hero-seeking-label">{profile.seekingLabel}</p>
           <ul className="tech-list hero-roles">
             {profile.seeking.map((role) => (
               <li key={role}>{role}</li>
             ))}
           </ul>
-        </div>
-        <p className="hero-actions">
+        </Rise>
+        <Rise as="p" className="hero-actions">
           <a href={profile.resumeHref} target="_blank" rel="noreferrer">
             {profile.resumeLabel}
           </a>
@@ -295,20 +360,24 @@ function App() {
           <a href="#experience" onClick={() => selectSection('experience')}>
             {profile.exploreLabel}
           </a>
-        </p>
+        </Rise>
       </section>
 
       <section id="experience">
-        <h2>Experience</h2>
+        <Rise as="h2">Experience</Rise>
         <ExperienceTimeline />
       </section>
 
       <section id="projects">
-        <h2>Projects</h2>
+        <Rise as="h2">Projects</Rise>
         <div className="project-grid">
-          {projects.map((project) => (
-            <article className="project-card" key={project.name}>
-              <ProjectShot name={project.name} />
+          {(showAllProjects ? projects : projects.slice(0, 2)).map((project, index) => (
+            <Rise
+              as="article"
+              className="project-card"
+              key={project.name}
+              delay={index % 2 === 1 ? '90ms' : undefined}
+            >
               <div className="project-copy">
                 <div className="project-heading">
                   <h3>{project.name}</h3>
@@ -328,9 +397,18 @@ function App() {
                   ))}
                 </ul>
               </div>
-            </article>
+            </Rise>
           ))}
         </div>
+        <Rise
+          as="button"
+          type="button"
+          className="project-more"
+          aria-expanded={showAllProjects}
+          onClick={() => setShowAllProjects((open) => !open)}
+        >
+          {showAllProjects ? 'Show less' : 'Show more'}
+        </Rise>
         {openProject ? (
           <div
             className="project-backdrop"
@@ -343,7 +421,6 @@ function App() {
               aria-labelledby="project-dialog-title"
               onClick={(event) => event.stopPropagation()}
             >
-              <ProjectShot name={openProject.name} large />
               <div className="project-copy">
                 <div className="project-heading">
                   <h3 id="project-dialog-title">{openProject.name}</h3>
@@ -375,10 +452,15 @@ function App() {
       </section>
 
       <section id="education">
-        <h2>Education</h2>
+        <Rise as="h2">Education</Rise>
         <div className="edu-grid">
-          {education.map((school) => (
-            <article className="edu-card" key={school.school}>
+          {education.map((school, index) => (
+            <Rise
+              as="article"
+              className="edu-card"
+              key={school.school}
+              delay={index % 2 === 1 ? '90ms' : undefined}
+            >
               <h3>{school.school}</h3>
               <p className="edu-degree">{school.credential}</p>
               <p className="edu-meta">{school.place}</p>
@@ -398,15 +480,17 @@ function App() {
                   <li key={point}>{point}</li>
                 ))}
               </ul>
-            </article>
+            </Rise>
           ))}
         </div>
       </section>
 
       <section id="athletics">
-        <h2>Honors</h2>
-        <p className="honor-lead">NCAA Division II women's tennis and academic honors.</p>
-        <div className="honor-board">
+        <Rise as="h2">Honors</Rise>
+        <Rise as="p" className="honor-lead">
+          NCAA Division II women's tennis and academic honors.
+        </Rise>
+        <Rise className="honor-board">
           {[honors.slice(0, Math.ceil(honors.length / 2)), honors.slice(Math.ceil(honors.length / 2))].map(
             (column) => (
               <ul className="honor-list" key={column[0].label}>
@@ -420,17 +504,19 @@ function App() {
               </ul>
             ),
           )}
-        </div>
+        </Rise>
       </section>
 
       <section id="skills">
-        <h2>Skills</h2>
-        <SkillMarquee />
+        <Rise as="h2">Skills</Rise>
+        <Rise>
+          <SkillMarquee />
+        </Rise>
       </section>
 
       <section id="contact">
         <div className="contact-layout">
-          <div>
+          <Rise>
             <h2>Contact</h2>
             <ul className="contact-list">
               <li>
@@ -456,7 +542,7 @@ function App() {
                 </a>
               </li>
             </ul>
-          </div>
+          </Rise>
           <ContactForm />
         </div>
       </section>
@@ -486,6 +572,7 @@ function ContactForm() {
     subject: '',
     message: '',
   })
+  const { ref: formRef, shown: formShown } = useRise<HTMLFormElement>()
   function fieldError(name: ContactName) {
     const value = values[name].trim()
     if (!value) return contactFields.find((field) => field.name === name)?.error ?? ''
@@ -505,7 +592,13 @@ function ContactForm() {
   }
 
   return (
-    <form className="contact-form" noValidate onSubmit={onSubmit}>
+    <form
+      ref={formRef}
+      className={formShown ? 'contact-form rise is-in' : 'contact-form rise'}
+      noValidate
+      onSubmit={onSubmit}
+      style={{ transitionDelay: '90ms' }}
+    >
       <h3>Connect with me</h3>
       {contactFields.map((field) => {
         const error = field.name === 'email' ? emailError : ''
@@ -586,24 +679,6 @@ function GitHubIcon() {
         d="M12 .5A12 12 0 0 0 8.2 23.8c.6.1.8-.3.8-.6v-2.1c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.7-1.3-1.7-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.2 4.8 18.2 5.1 18.2 5.1c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"
       />
     </svg>
-  )
-}
-
-function ProjectShot({ name, large = false }: { name: string; large?: boolean }) {
-  return (
-    <div
-      className={large ? 'project-shot is-large' : 'project-shot'}
-      role="img"
-      aria-label={`Placeholder image for ${name}`}
-    >
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path
-          fill="currentColor"
-          d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13zM6 16.5l3.2-3.2 2.1 2.1 3.4-3.9L18 16.5V7H6v9.5zM9 9.2a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z"
-        />
-      </svg>
-      <span>Placeholder</span>
-    </div>
   )
 }
 
