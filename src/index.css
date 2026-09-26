@@ -465,6 +465,114 @@ ul {
   font-size: 0.98rem;
 }
 
+.edu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+  align-items: stretch;
+}
+
+.edu-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 1.05rem 1.05rem 1.15rem;
+  border: 1px solid #2e313a;
+  border-radius: 14px;
+  background: #16181e;
+  box-shadow:
+    0 16px 34px rgba(0, 0, 0, 0.28),
+    0 8px 22px rgba(255, 61, 138, 0.08);
+}
+
+.edu-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--pink), var(--purple) 58%, var(--blue));
+}
+
+.edu-card h3 {
+  margin: 0;
+  color: var(--pink);
+}
+
+.edu-degree {
+  max-width: none;
+  margin-top: 0.35rem;
+  color: #f3f4f6;
+  font-size: 0.98rem;
+}
+
+.edu-meta {
+  max-width: none;
+  margin-top: 0.2rem;
+  color: #c5c8d0;
+  font-size: 0.95rem;
+}
+
+.edu-dates {
+  max-width: none;
+  margin-top: 0.45rem;
+  color: var(--blue);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.edu-gpa {
+  max-width: none;
+  margin-top: 0.7rem;
+  color: #f4f5f7;
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.edu-gpa-value {
+  color: #3ee08a;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.edu-kicker {
+  margin: 0.9rem 0 0;
+  color: #9ca3af;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.edu-card .tech-list {
+  gap: 0.3rem;
+  margin: 0.4rem 0 0;
+}
+
+.edu-card .tech-list li {
+  padding: 0.08rem 0.38rem;
+  border-radius: 5px;
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+
+.edu-points {
+  margin: 0.45rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.edu-points li {
+  max-width: none;
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.edu-points li + li {
+  margin-top: 0.4rem;
+}
+
 .timeline {
   position: relative;
   display: grid;
@@ -965,7 +1073,8 @@ button.skill-chip:focus-visible {
   }
 
   .project-grid,
-  .honor-board {
+  .honor-board,
+  .edu-grid {
     grid-template-columns: 1fr;
   }
 

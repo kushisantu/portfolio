@@ -21,7 +21,7 @@ export const profile = {
 }
 
 export const about =
-  'M.S. Computer Science student at George Washington University (GPA 3.9), with a B.S. in Computer Science, AI concentration, from Wilmington University (May 2025, GPA 4.0, Undergraduate Technology Award). The degree work has been alongside college athletics.'
+  'M.S. Computer Science student at George Washington University (cumulative GPA 3.83), with a B.S. in Computer Science, AI concentration, from Wilmington University (May 2025, institutional GPA 4.0, Undergraduate Technology Award). The degree work has been alongside college athletics.'
 
 export const experience = [
   {
@@ -40,6 +40,7 @@ export const experience = [
   {
     role: 'AI Engineer Intern',
     org: 'Fintellix – G2 Risk Solutions',
+    place: 'Bengaluru, India',
     dates: 'June 2024 – December 2024',
     tools: 'Python, Java, ReactJS, JavaScript, Next.js, Django, NumPy, PostgreSQL',
     points: [
@@ -51,6 +52,7 @@ export const experience = [
   {
     role: 'Software Development Intern',
     org: 'EnerMAN Technologies',
+    place: 'Bengaluru, India',
     dates: 'June 2023 – July 2023',
     tools: 'Python, python-opcua, Bash, GitHub, Visual Studio Code',
     points: [
@@ -114,19 +116,35 @@ export const projects = [
 export const education = [
   {
     school: 'George Washington University',
-    place: 'Washington, DC',
     credential: 'M.S. in Computer Science',
-    dates: 'Expected May 2027',
-    detail: 'GPA 3.9/4.0',
-    coursework: 'Machine Learning, Trustworthy AI, Gen AI for Business',
+    place: 'Washington, DC',
+    dates: 'Fall 2025 – Present',
+    gpa: '3.83',
+    focus: ['Machine Learning', 'Generative AI', 'Trustworthy AI', 'Data Mining', 'Algorithms'],
+    highlights: [
+      '3.83 cumulative GPA with a 3.90 first-semester GPA, with coursework spanning Machine Learning, Trustworthy AI, Algorithms, Systems, and Generative AI.',
+      'Pursuing graduate studies while competing with GW Club Tennis, with a focus on applying AI to real-world and business applications.',
+    ],
   },
   {
     school: 'Wilmington University',
-    place: 'Delaware',
-    credential: 'B.S. in Computer Science (AI Concentration)',
-    dates: 'Completed May 2025',
-    detail: 'GPA 4.0/4.0 · Undergraduate Technology Award',
-    coursework: '',
+    credential: 'B.S. in Computer Science, Artificial Intelligence',
+    place: 'Wilmington, Delaware',
+    dates: 'Graduated: May 2025',
+    gpa: '4.00',
+    focus: [
+      'Artificial Intelligence',
+      'Machine Learning',
+      'Python',
+      'Java',
+      'Algorithms',
+      'Computer Vision',
+      'Databases',
+    ],
+    highlights: [
+      '4.00 GPA, Dean’s List, and recipient of the Undergraduate Technology Award while earning a B.S. in Computer Science with an AI concentration.',
+      'NCAA Division II tennis scholarship athlete and 2× CACC Champion, balancing collegiate athletics with a rigorous CS/AI curriculum.',
+    ],
   },
 ]
 

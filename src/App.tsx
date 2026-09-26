@@ -363,18 +363,31 @@ function App() {
 
       <section id="education">
         <h2>Education</h2>
-        {education.map((school) => (
-          <article className="entry" key={school.school}>
-            <h3>{school.school}</h3>
-            <p className="meta">
-              {school.credential} · {school.dates}
-            </p>
-            <p>
-              {school.place}. {school.detail}
-            </p>
-            {school.coursework ? <p>Coursework: {school.coursework}</p> : null}
-          </article>
-        ))}
+        <div className="edu-grid">
+          {education.map((school) => (
+            <article className="edu-card" key={school.school}>
+              <h3>{school.school}</h3>
+              <p className="edu-degree">{school.credential}</p>
+              <p className="edu-meta">{school.place}</p>
+              <p className="edu-dates">{school.dates}</p>
+              <p className="edu-gpa">
+                GPA: <span className="edu-gpa-value">{school.gpa}</span>
+              </p>
+              <p className="edu-kicker">Focus areas</p>
+              <ul className="tech-list">
+                {school.focus.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <p className="edu-kicker">Highlights</p>
+              <ul className="edu-points">
+                {school.highlights.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section id="athletics">
