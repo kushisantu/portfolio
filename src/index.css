@@ -1063,6 +1063,125 @@ button.skill-chip:focus-visible {
   flex: none;
 }
 
+.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(11rem, 0.7fr) minmax(0, 1.3fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.contact-form {
+  position: relative;
+  overflow: hidden;
+  margin-top: 0.15rem;
+  padding: 1.15rem 1.15rem 1.2rem;
+  border: 1px solid #2e313a;
+  border-radius: 14px;
+  background: #16181e;
+  box-shadow:
+    0 16px 34px rgba(0, 0, 0, 0.28),
+    0 8px 22px rgba(255, 61, 138, 0.08);
+}
+
+.contact-form::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--pink), var(--purple) 58%, var(--blue));
+}
+
+.contact-form h3 {
+  margin: 0;
+  color: #f4f5f7;
+  font-size: 1.15rem;
+}
+
+.contact-field {
+  display: grid;
+  gap: 0.28rem;
+  margin-top: 0.75rem;
+}
+
+.contact-field label {
+  color: #d1d5db;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.contact-field label span {
+  color: var(--pink);
+}
+
+.contact-field input,
+.contact-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #2e313a;
+  border-radius: 8px;
+  background: #12141a;
+  color: #f4f5f7;
+  font: inherit;
+  font-size: 0.92rem;
+}
+
+.contact-field textarea {
+  min-height: 7.5rem;
+  resize: vertical;
+}
+
+.contact-field input::placeholder,
+.contact-field textarea::placeholder {
+  color: #6b7280;
+}
+
+.contact-field input:focus,
+.contact-field textarea:focus {
+  outline: none;
+  border-color: rgba(255, 61, 138, 0.75);
+  box-shadow: 0 0 0 3px rgba(255, 61, 138, 0.16);
+}
+
+.contact-form p {
+  max-width: none;
+}
+
+.contact-error {
+  color: var(--pink);
+  font-size: 0.78rem;
+}
+
+.contact-submit {
+  margin-top: 1rem;
+  padding: 0.38rem 0.75rem;
+  border: 0;
+  border-radius: 8px;
+  background: var(--pink);
+  color: #fff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.contact-submit:hover:not(:disabled) {
+  background: #ff5c9c;
+}
+
+.contact-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 800px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 960px) {
   .site-header {
     flex-wrap: wrap;

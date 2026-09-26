@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import {
   contact,
   education,
@@ -13,25 +13,28 @@ import { SkillMarquee } from './SkillMarquee.tsx'
 
 type SectionId = (typeof sections)[number]['id']
 
-function markerLine() {
-  const header = document.querySelector('.site-header')
-  const bottom = header?.getBoundingClientRect().bottom ?? 48
-  return bottom + 32
-}
-
-function sectionAtMarker(): SectionId {
+function sectionInView(): SectionId {
   const atEnd =
     window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4
   if (atEnd) return sections[sections.length - 1].id
 
-  const line = markerLine()
+  const header = document.querySelector('.site-header')
+  const top = header?.getBoundingClientRect().bottom ?? 0
+  const bottom = window.innerHeight
   let current: SectionId = sections[0].id
+  let most = -1
+
   for (const section of sections) {
     const node = document.getElementById(section.id)
-    if (node && node.getBoundingClientRect().top <= line) {
+    if (!node) continue
+    const rect = node.getBoundingClientRect()
+    const visible = Math.min(rect.bottom, bottom) - Math.max(rect.top, top)
+    if (visible > most) {
+      most = visible
       current = section.id
     }
   }
+
   return current
 }
 
@@ -170,7 +173,7 @@ function App() {
 
   useEffect(() => {
     function sync() {
-      const current = sectionAtMarker()
+      const current = sectionInView()
       if (lockedId.current && current !== lockedId.current) return
       lockedId.current = null
       setActiveId((prev) => (prev === current ? prev : current))
@@ -426,33 +429,119 @@ function App() {
       </section>
 
       <section id="contact">
-        <h2>Contact</h2>
-        <ul className="contact-list">
-          <li>
-            <PinIcon />
-            <span>{contact.location}</span>
-          </li>
-          <li>
-            <a href={`mailto:${contact.email}`}>
-              <MailIcon />
-              <span>{contact.email}</span>
-            </a>
-          </li>
-          <li>
-            <a href={contact.linkedin} target="_blank" rel="noreferrer">
-              <LinkedInIcon />
-              <span>LinkedIn</span>
-            </a>
-          </li>
-          <li>
-            <a href={contact.github} target="_blank" rel="noreferrer">
-              <GitHubIcon />
-              <span>GitHub</span>
-            </a>
-          </li>
-        </ul>
+        <div className="contact-layout">
+          <div>
+            <h2>Contact</h2>
+            <ul className="contact-list">
+              <li>
+                <PinIcon />
+                <span>{contact.location}</span>
+              </li>
+              <li>
+                <a href={`mailto:${contact.email}`}>
+                  <MailIcon />
+                  <span>{contact.email}</span>
+                </a>
+              </li>
+              <li>
+                <a href={contact.linkedin} target="_blank" rel="noreferrer">
+                  <LinkedInIcon />
+                  <span>LinkedIn</span>
+                </a>
+              </li>
+              <li>
+                <a href={contact.github} target="_blank" rel="noreferrer">
+                  <GitHubIcon />
+                  <span>GitHub</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <ContactForm />
+        </div>
       </section>
     </div>
+  )
+}
+
+const contactFields = [
+  { name: 'name', label: 'Name', type: 'text', placeholder: 'Your full name', error: 'Name is required' },
+  { name: 'email', label: 'Email', type: 'email', placeholder: 'your.email@example.com', error: 'Email is required' },
+  { name: 'subject', label: 'Subject', type: 'text', placeholder: "What's this about?", error: 'Subject is required' },
+  {
+    name: 'message',
+    label: 'Message',
+    type: 'textarea',
+    placeholder: 'Tell me about your project or opportunity...',
+    error: 'Message is required',
+  },
+] as const
+
+type ContactName = (typeof contactFields)[number]['name']
+
+function ContactForm() {
+  const [values, setValues] = useState<Record<ContactName, string>>({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  })
+  function fieldError(name: ContactName) {
+    const value = values[name].trim()
+    if (!value) return contactFields.find((field) => field.name === name)?.error ?? ''
+    if (name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Enter a valid email'
+    return ''
+  }
+
+  const ready = contactFields.every((field) => !fieldError(field.name))
+  const emailError = values.email.trim() ? fieldError('email') : ''
+
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!ready) return
+
+    const body = `Name: ${values.name.trim()}\nEmail: ${values.email.trim()}\n\n${values.message.trim()}`
+    window.location.href = `mailto:${contact.email}?subject=${encodeURIComponent(values.subject.trim())}&body=${encodeURIComponent(body)}`
+  }
+
+  return (
+    <form className="contact-form" noValidate onSubmit={onSubmit}>
+      <h3>Connect with me</h3>
+      {contactFields.map((field) => {
+        const error = field.name === 'email' ? emailError : ''
+        const inputId = `contact-${field.name}`
+        const errorId = `${inputId}-error`
+        const shared = {
+          id: inputId,
+          name: field.name,
+          placeholder: field.placeholder,
+          value: values[field.name],
+          required: true,
+          'aria-invalid': error ? true : undefined,
+          'aria-describedby': error ? errorId : undefined,
+          onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            setValues((current) => ({ ...current, [field.name]: event.target.value }))
+          },
+        }
+
+        return (
+          <div className="contact-field" key={field.name}>
+            <label htmlFor={inputId}>
+              {field.label} <span aria-hidden="true">*</span>
+            </label>
+            {field.type === 'textarea' ? <textarea {...shared} rows={5} /> : <input {...shared} type={field.type} />}
+            {error ? (
+              <p className="contact-error" id={errorId} role="alert">
+                {error}
+              </p>
+            ) : null}
+          </div>
+        )
+      })}
+      <button className="contact-submit" type="submit" disabled={!ready}>
+        Connect!
+      </button>
+    </form>
   )
 }
 
