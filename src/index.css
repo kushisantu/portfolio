@@ -156,7 +156,24 @@ h2 {
 }
 
 h1 {
-  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-size: clamp(1.9rem, 4.5vw, 2.85rem);
+}
+
+#hero {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - 3.5rem);
+  padding-top: 2.6rem;
+  padding-bottom: 2.4rem;
+}
+
+#hero p {
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+#hero p + p {
+  margin-top: 1rem;
 }
 
 h1::after {
@@ -167,6 +184,57 @@ h1::after {
   margin-top: 0.85rem;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--pink), var(--purple) 70%, var(--blue));
+}
+
+#hero .hero-tagline {
+  margin-top: 1.15rem;
+  color: #f4f5f7;
+  font-size: 1.12rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.hero-seeking {
+  margin-top: 1.35rem;
+}
+
+#hero .hero-seeking-label {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero-roles {
+  margin-top: 0.7rem;
+}
+
+#hero .hero-roles li {
+  padding: 0.24rem 0.55rem;
+  font-size: 0.84rem;
+}
+
+#hero .hero-actions {
+  margin-top: 1.5rem;
+  margin-bottom: auto;
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.hero-actions a {
+  color: var(--blue);
+}
+
+.hero-actions a:hover {
+  color: #9ecfff;
+}
+
+.hero-dot {
+  margin: 0 0.4rem;
+  color: #6b7280;
+  font-weight: 500;
 }
 
 h2 {

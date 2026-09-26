@@ -1,6 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
-  about,
   contact,
   education,
   experience,
@@ -271,18 +270,29 @@ function App() {
 
       <section id="hero">
         <h1>{profile.name}</h1>
-        <p>{profile.degreeLine}</p>
-        <p>{profile.studentAthleteLine}</p>
-        <p>
-          <a className="text-link" href={profile.resumeHref} download>
+        <p className="hero-tagline">{profile.tagline}</p>
+        {profile.paragraphs.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
+        <div className="hero-seeking">
+          <p className="hero-seeking-label">{profile.seekingLabel}</p>
+          <ul className="tech-list hero-roles">
+            {profile.seeking.map((role) => (
+              <li key={role}>{role}</li>
+            ))}
+          </ul>
+        </div>
+        <p className="hero-actions">
+          <a href={profile.resumeHref} target="_blank" rel="noreferrer">
             {profile.resumeLabel}
           </a>
+          <span className="hero-dot" aria-hidden="true">
+            ·
+          </span>
+          <a href="#experience" onClick={() => selectSection('experience')}>
+            {profile.exploreLabel}
+          </a>
         </p>
-      </section>
-
-      <section id="about">
-        <h2>About</h2>
-        <p>{about}</p>
       </section>
 
       <section id="experience">

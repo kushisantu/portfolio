@@ -1,6 +1,5 @@
 export const sections = [
   { id: 'hero', label: 'Hero' },
-  { id: 'about', label: 'About' },
   { id: 'experience', label: 'Experience' },
   { id: 'projects', label: 'Projects' },
   { id: 'education', label: 'Education' },
@@ -14,14 +13,17 @@ export const navSections = sections.filter((section) => section.id !== 'hero')
 export const profile = {
   name: 'Kushi Santosh Khandoji',
   mark: 'KK',
-  degreeLine: 'M.S. Computer Science, George Washington University',
-  studentAthleteLine: 'Student-athlete',
+  tagline: 'Building intelligent software for real-world problems.',
+  paragraphs: [
+    'I’m a Computer Science graduate student at George Washington University focused on AI engineering, intelligent agents, and software development. I enjoy taking ideas from “could this work?” to something people can actually use, whether that means building an LLM-powered application, automating tasks with AI, designing an agent workflow, or engineering the software behind it.',
+    'I’m curious, hardworking, and relentlessly driven to improve. My background as both a computer scientist and competitive student-athlete has shaped how I approach challenges: with discipline, persistence, adaptability, and a strong bias toward getting things done.',
+  ],
+  seekingLabel: 'Seeking opportunities in:',
+  seeking: ['AI Engineering', 'Forward Deployed Engineering', 'Software Engineering'],
   resumeHref: '/Kushi_Khandoji_Resume_Latest.pdf',
-  resumeLabel: 'Download resume',
+  resumeLabel: 'View Resume',
+  exploreLabel: 'Explore',
 }
-
-export const about =
-  'M.S. Computer Science student at George Washington University (cumulative GPA 3.83), with a B.S. in Computer Science, AI concentration, from Wilmington University (May 2025, institutional GPA 4.0, Undergraduate Technology Award). The degree work has been alongside college athletics.'
 
 export const experience = [
   {
