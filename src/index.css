@@ -28,10 +28,16 @@ html {
 
 body {
   margin: 0;
+  background:
+    radial-gradient(40rem 28rem at 82% 18%, rgba(255, 61, 138, 0.16), transparent 62%),
+    radial-gradient(28rem 22rem at 94% 46%, rgba(94, 176, 255, 0.1), transparent 64%),
+    radial-gradient(24rem 18rem at 8% 78%, rgba(176, 107, 255, 0.09), transparent 68%),
+    var(--bg);
+  background-attachment: fixed;
 }
 
 .site {
-  width: min(52rem, calc(100% - 8rem));
+  width: min(76rem, calc(100% - 6rem));
   margin-inline: auto;
 }
 
@@ -48,16 +54,16 @@ body {
   transform: none;
 }
 
-#hero > .rise:nth-child(1) { transition-delay: 0.06s; }
-#hero > .rise:nth-child(2) { transition-delay: 0.18s; }
-#hero > .rise:nth-child(3) { transition-delay: 0.32s; }
-#hero > .rise:nth-child(4) { transition-delay: 0.46s; }
-#hero > .rise:nth-child(5) { transition-delay: 0.6s; }
-#hero > .rise:nth-child(6) { transition-delay: 0.74s; }
+.hero-copy > .rise:nth-child(1) { transition-delay: 0.06s; }
+.hero-copy > .rise:nth-child(2) { transition-delay: 0.18s; }
+.hero-copy > .rise:nth-child(3) { transition-delay: 0.32s; }
+.hero-copy > .rise:nth-child(4) { transition-delay: 0.46s; }
+.hero-copy > .rise:nth-child(5) { transition-delay: 0.6s; }
+.hero-copy > .rise:nth-child(6) { transition-delay: 0.74s; }
 
 @media (max-width: 800px) {
   .site {
-    width: min(52rem, calc(100% - 1.5rem));
+    width: min(76rem, calc(100% - 2.5rem));
   }
 
 }
@@ -180,11 +186,20 @@ h1 {
 }
 
 #hero {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(17.5rem, 0.82fr);
+  align-items: stretch;
+  column-gap: 2.75rem;
   min-height: calc(100svh - 3.5rem);
   padding-top: 2.6rem;
   padding-bottom: 2.4rem;
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100%;
 }
 
 #hero p {
@@ -194,16 +209,6 @@ h1 {
 
 #hero p + p {
   margin-top: 1rem;
-}
-
-h1::after {
-  content: "";
-  display: block;
-  width: 4.5rem;
-  height: 3px;
-  margin-top: 0.85rem;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--pink), var(--purple) 70%, var(--blue));
 }
 
 #hero .hero-tagline {
@@ -251,6 +256,53 @@ h1::after {
   color: #9ecfff;
 }
 
+.hero-stage {
+  align-self: center;
+  min-width: 0;
+}
+
+.hero-field {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 24rem;
+  overflow: hidden;
+  border: 1px solid #2e313a;
+  border-radius: 22px;
+  background: #12141a;
+}
+
+.field-wash {
+  position: absolute;
+  inset: -30%;
+  background:
+    radial-gradient(circle at 28% 32%, rgba(255, 61, 138, 0.7), transparent 36%),
+    radial-gradient(circle at 72% 38%, rgba(176, 107, 255, 0.55), transparent 34%),
+    radial-gradient(circle at 48% 78%, rgba(94, 176, 255, 0.5), transparent 36%);
+  filter: blur(10px);
+  animation: field-drift 16s ease-in-out infinite alternate;
+}
+
+.hero-mark {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-size: clamp(4.4rem, 7vw, 6.4rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+@keyframes field-drift {
+  from {
+    transform: translate(-4%, -3%) scale(1);
+  }
+
+  to {
+    transform: translate(6%, 5%) scale(1.08);
+  }
+}
+
 .hero-dot {
   margin: 0 0.4rem;
   color: #6b7280;
@@ -280,16 +332,19 @@ li {
 p + p,
 .entry,
 .project-grid,
-.honor-board,
 ul {
   margin-top: 0.75rem;
 }
 
 .project-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.9rem;
   align-items: stretch;
+}
+
+#projects {
+  min-height: calc(100svh - 3.5rem);
 }
 
 .project-more {
@@ -315,88 +370,139 @@ ul {
   outline-offset: 3px;
 }
 
-.honor-lead {
-  margin: 0.15rem 0 0;
-  color: #c5c8d0;
-}
-
-.honor-board {
-  position: relative;
+.blog-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-top: 0.75rem;
+  align-items: stretch;
+}
+
+.blog-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.9rem 1rem 0.95rem;
   overflow: hidden;
   border: 1px solid #2e313a;
   border-radius: 14px;
   background: #16181e;
 }
 
-.honor-board::before {
+.blog-card::before {
   content: "";
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
-  z-index: 1;
   height: 2px;
   background: linear-gradient(90deg, var(--pink), var(--purple) 58%, var(--blue));
 }
 
-.honor-list {
-  margin: 0;
-  padding: 0.55rem 1rem 0.3rem;
-  list-style: none;
+.blog-copy {
+  min-width: 0;
 }
 
-.honor-list + .honor-list {
-  border-left: 1px solid var(--line);
+.blog-copy h3 {
+  margin-top: 0.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
 }
 
-.honor-list li {
+.blog-copy p:last-child {
+  margin-top: 0.35rem;
+  max-width: none;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.blog-date {
+  color: var(--blue);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.blog-open {
+  margin-top: auto;
+  flex: none;
+  padding: 0.48rem 1.1rem;
+  border-radius: 8px;
+  background: var(--pink);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.blog-open:hover {
+  background: #ff5c9c;
+}
+
+.blog-open:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 3px;
+}
+
+.honor-lead {
+  margin: 0.15rem 0 0;
+  color: #c5c8d0;
+}
+
+.honor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: 0.55rem 0.9rem;
+  margin-top: 0.7rem;
+}
+
+.honor-card {
+  box-sizing: border-box;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 4.55rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid #2e313a;
+  border-radius: 10px;
+  background: #16181e;
+}
+
+.honor-card-top {
+  display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.35rem 1rem;
-  max-width: none;
-  padding: 0.6rem 0;
-  font-size: 0.98rem;
-  border-top: 1px solid var(--line);
-  color: #f3f4f6;
-  cursor: help;
-  outline: none;
-}
-
-.honor-list li:focus-visible {
-  outline: 2px solid var(--pink);
-  outline-offset: 2px;
+  gap: 0.65rem;
 }
 
 .honor-label {
-  border-bottom: 1px dotted rgba(255, 61, 138, 0.45);
+  color: #f4f5f7;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.25;
 }
 
 .honor-when {
   flex: none;
-  margin-left: auto;
-  color: var(--pink);
-  font-size: 0.92rem;
+  color: var(--blue);
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
-.honor-tip {
-  flex: 1 0 100%;
-  max-height: 0;
-  overflow: hidden;
-  color: #b8bcc6;
-  font-size: 0.84rem;
-  line-height: 1.4;
-  opacity: 0;
-}
-
-.honor-list li:hover .honor-tip,
-.honor-list li:focus-visible .honor-tip {
-  max-height: 4.5rem;
+.honor-card p {
   margin-top: 0.15rem;
-  opacity: 1;
+  max-width: none;
+  color: #b7bcc6;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+#athletics {
+  padding-block: 2rem;
 }
 
 .project-card,
@@ -408,6 +514,15 @@ ul {
   border: 1px solid #2e313a;
   border-radius: 14px;
   background: #16181e;
+}
+
+.project-card.rise.is-in:hover {
+  border-color: rgba(255, 61, 138, 0.45);
+  transform: translateY(-4px);
+  transition:
+    opacity 1050ms cubic-bezier(0.22, 0.08, 0.16, 1),
+    transform 420ms cubic-bezier(0.22, 0.08, 0.16, 1),
+    border-color 420ms ease;
 }
 
 .project-card::before,
@@ -540,7 +655,7 @@ ul {
 .edu-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.9rem;
+  gap: 2.5rem;
   align-items: stretch;
 }
 
@@ -1191,9 +1306,27 @@ button.skill-chip:focus-visible {
   .contact-layout {
     grid-template-columns: 1fr;
   }
+
+  .blog-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1100px) {
+  .project-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 960px) {
+  #hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stage {
+    display: none;
+  }
+
   .site-header {
     flex-wrap: wrap;
     padding: 0.75rem 1rem;
@@ -1271,14 +1404,10 @@ button.skill-chip:focus-visible {
   }
 
   .project-grid,
-  .honor-board,
-  .edu-grid {
+  .honor-grid,
+  .edu-grid,
+  .blog-grid {
     grid-template-columns: 1fr;
-  }
-
-  .honor-list + .honor-list {
-    border-top: 1px solid var(--line);
-    border-left: 0;
   }
 
   .skill-marquee {
@@ -1329,6 +1458,14 @@ button.skill-chip:focus-visible {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+
+  .field-wash {
+    animation: none;
+  }
+
+  .project-card.rise.is-in:hover {
+    transform: none;
   }
 
   .skill-marquee {

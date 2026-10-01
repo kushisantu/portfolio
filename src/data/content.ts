@@ -5,6 +5,7 @@ export const sections = [
   { id: 'education', label: 'Education' },
   { id: 'athletics', label: 'Honors' },
   { id: 'skills', label: 'Skills' },
+  { id: 'blog', label: 'Blog' },
   { id: 'contact', label: 'Contact' },
 ] as const
 
@@ -149,8 +150,6 @@ export const education = [
       'Machine Learning',
       'Python',
       'Java',
-      'Algorithms',
-      'Computer Vision',
       'Databases',
     ],
     highlights: [
@@ -329,6 +328,16 @@ export const skillGroups = [
     skills: ['Kafka', 'Keycloak', 'Role-Based Authentication', 'OPC UA'],
   },
 ] as const
+
+export const posts = [
+  {
+    title: 'Evaluating GPT’s Common Sense in Everyday Decision-Making',
+    date: 'April 9, 2026',
+    summary:
+      'Three everyday decisions — an impulse buy, a vague social plan, and a month-long houseguest — and where GPT’s advice is useful, generic, or missing the personal context common sense needs.',
+    href: 'https://medium.com/@kushi.khandoji/evaluating-gpts-common-sense-in-everyday-decision-making-15fba01e3f14',
+  },
+]
 
 export const contact = {
   email: 'kushi.s.khandoji@gmail.com',

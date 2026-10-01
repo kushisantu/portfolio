@@ -5,6 +5,7 @@ import {
   experience,
   honors,
   navSections,
+  posts,
   profile,
   projects,
   sections,
@@ -333,33 +334,41 @@ function App() {
       </header>
 
       <section id="hero">
-        <Rise as="h1">{profile.name}</Rise>
-        <Rise as="p" className="hero-tagline">
-          {profile.tagline}
-        </Rise>
-        {profile.paragraphs.map((paragraph) => (
-          <Rise as="p" key={paragraph}>
-            {paragraph}
+        <div className="hero-copy">
+          <Rise as="h1">{profile.name}</Rise>
+          <Rise as="p" className="hero-tagline">
+            {profile.tagline}
           </Rise>
-        ))}
-        <Rise className="hero-seeking">
-          <p className="hero-seeking-label">{profile.seekingLabel}</p>
-          <ul className="tech-list hero-roles">
-            {profile.seeking.map((role) => (
-              <li key={role}>{role}</li>
-            ))}
-          </ul>
-        </Rise>
-        <Rise as="p" className="hero-actions">
-          <a href={profile.resumeHref} target="_blank" rel="noreferrer">
-            {profile.resumeLabel}
-          </a>
-          <span className="hero-dot" aria-hidden="true">
-            ·
-          </span>
-          <a href="#experience" onClick={() => selectSection('experience')}>
-            {profile.exploreLabel}
-          </a>
+          {profile.paragraphs.map((paragraph) => (
+            <Rise as="p" key={paragraph}>
+              {paragraph}
+            </Rise>
+          ))}
+          <Rise className="hero-seeking">
+            <p className="hero-seeking-label">{profile.seekingLabel}</p>
+            <ul className="tech-list hero-roles">
+              {profile.seeking.map((role) => (
+                <li key={role}>{role}</li>
+              ))}
+            </ul>
+          </Rise>
+          <Rise as="p" className="hero-actions">
+            <a href={profile.resumeHref} target="_blank" rel="noreferrer">
+              {profile.resumeLabel}
+            </a>
+            <span className="hero-dot" aria-hidden="true">
+              ·
+            </span>
+            <a href="#experience" onClick={() => selectSection('experience')}>
+              {profile.exploreLabel}
+            </a>
+          </Rise>
+        </div>
+        <Rise className="hero-stage" delay="0.42s">
+          <div className="hero-field" aria-hidden="true">
+            <span className="field-wash" />
+            <span className="hero-mark">{profile.mark}</span>
+          </div>
         </Rise>
       </section>
 
@@ -371,12 +380,12 @@ function App() {
       <section id="projects">
         <Rise as="h2">Projects</Rise>
         <div className="project-grid">
-          {(showAllProjects ? projects : projects.slice(0, 2)).map((project, index) => (
+          {(showAllProjects ? projects : projects.slice(0, 3)).map((project, index) => (
             <Rise
               as="article"
               className="project-card"
               key={project.name}
-              delay={index % 2 === 1 ? '90ms' : undefined}
+              delay={index % 3 === 0 ? undefined : `${(index % 3) * 90}ms`}
             >
               <div className="project-copy">
                 <div className="project-heading">
@@ -490,21 +499,22 @@ function App() {
         <Rise as="p" className="honor-lead">
           NCAA Division II women's tennis and academic honors.
         </Rise>
-        <Rise className="honor-board">
-          {[honors.slice(0, Math.ceil(honors.length / 2)), honors.slice(Math.ceil(honors.length / 2))].map(
-            (column) => (
-              <ul className="honor-list" key={column[0].label}>
-                {column.map((item) => (
-                  <li key={item.label} tabIndex={0}>
-                    <span className="honor-label">{item.label}</span>
-                    {item.when ? <span className="honor-when">{item.when}</span> : null}
-                    <span className="honor-tip">{item.detail}</span>
-                  </li>
-                ))}
-              </ul>
-            ),
-          )}
-        </Rise>
+        <div className="honor-grid">
+          {honors.map((item, index) => (
+            <Rise
+              as="article"
+              className="honor-card"
+              key={item.label}
+              delay={index % 2 === 1 ? '90ms' : undefined}
+            >
+              <div className="honor-card-top">
+                <span className="honor-label">{item.label}</span>
+                {item.when ? <span className="honor-when">{item.when}</span> : null}
+              </div>
+              <p>{item.detail}</p>
+            </Rise>
+          ))}
+        </div>
       </section>
 
       <section id="skills">
@@ -512,6 +522,24 @@ function App() {
         <Rise>
           <SkillMarquee />
         </Rise>
+      </section>
+
+      <section id="blog">
+        <Rise as="h2">Blog</Rise>
+        <div className="blog-grid">
+        {posts.map((post) => (
+          <Rise as="article" className="blog-card" key={post.href}>
+            <div className="blog-copy">
+              <p className="blog-date">{post.date}</p>
+              <h3>{post.title}</h3>
+              <p>{post.summary}</p>
+            </div>
+            <a className="blog-open" href={post.href} target="_blank" rel="noreferrer">
+              Open
+            </a>
+          </Rise>
+        ))}
+        </div>
       </section>
 
       <section id="contact">
