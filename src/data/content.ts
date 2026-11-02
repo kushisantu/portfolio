@@ -21,9 +21,47 @@ export const profile = {
   ],
   seekingLabel: 'Seeking opportunities in:',
   seeking: ['AI Engineering', 'Forward Deployed Engineering', 'Software Engineering'],
-  resumeHref: '/Kushi_Khandoji_Resume_Latest.pdf',
+  resumeHref: '/Kushi_Khandoji_Resume.pdf',
   resumeLabel: 'View Resume',
   exploreLabel: 'Explore',
+  orbitIcons: [
+    {
+      label: 'Builder',
+      code: '1f4bb',
+      size: '58%',
+      duration: '17s',
+      direction: 'normal',
+      delay: '-2s',
+      start: '40deg',
+    },
+    {
+      label: 'Athlete',
+      code: '1f3be',
+      size: '74%',
+      duration: '23s',
+      direction: 'reverse',
+      delay: '-9s',
+      start: '200deg',
+    },
+    {
+      label: 'Student',
+      code: '1f393',
+      size: '88%',
+      duration: '29s',
+      direction: 'normal',
+      delay: '-15s',
+      start: '310deg',
+    },
+    {
+      label: 'AI',
+      code: '1f916',
+      size: '100%',
+      duration: '21s',
+      direction: 'reverse',
+      delay: '-5s',
+      start: '110deg',
+    },
+  ],
 }
 
 export const experience = [

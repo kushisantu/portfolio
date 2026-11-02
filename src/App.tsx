@@ -365,9 +365,40 @@ function App() {
           </Rise>
         </div>
         <Rise className="hero-stage" delay="0.42s">
-          <div className="hero-field" aria-hidden="true">
-            <span className="field-wash" />
-            <span className="hero-mark">{profile.mark}</span>
+          <div className="hero-orbit" aria-hidden="true">
+            <span className="orbit-glow" />
+            <span className="orbit-core">
+              <span className="hero-mark">{profile.mark}</span>
+            </span>
+            {profile.orbitIcons.map((item) => (
+              <span
+                className="orbit-path"
+                key={item.label}
+                style={
+                  {
+                    '--orbit-size': item.size,
+                    '--orbit-duration': item.duration,
+                    '--orbit-direction': item.direction,
+                    '--orbit-delay': item.delay,
+                    '--orbit-start': item.start,
+                  } as CSSProperties
+                }
+              >
+                <span className="orbit-ring" />
+                <span className="orbit-spin">
+                  <span className="orbit-item">
+                    <img
+                      className="orbit-icon"
+                      src={`https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/img/apple/64/${item.code}.png`}
+                      alt=""
+                      width={40}
+                      height={40}
+                      decoding="async"
+                    />
+                  </span>
+                </span>
+              </span>
+            ))}
           </div>
         </Rise>
       </section>
