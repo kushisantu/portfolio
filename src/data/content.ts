@@ -67,10 +67,42 @@ export const experience = [
 
 export const projects = [
   {
+    name: 'Flight Fare Prediction & Analytics',
+    summary:
+      'Flight fare search and prediction from 30M+ U.S. DOT ticket records, with confidence-checked estimates across 400+ airports.',
+    tools: ['FastAPI', 'React', 'SQLite', 'NumPy', 'pytest'],
+    github: 'https://github.com/kushisantu/flight-price-tracker',
+    points: [
+      'Built a flight fare search application using React and Python/FastAPI, leveraging 30M+ U.S. Department of Transportation ticket records across 400+ airports to provide data-driven fare estimates.',
+      'Developed a fare prediction system on 8M unseen ticket records, achieving ~$97 average estimation error and capturing 81% of actual fares within predicted ranges; implemented confidence checks to prevent unreliable estimates.',
+    ],
+  },
+  {
+    name: 'Micro Marketplace',
+    summary:
+      'E-commerce microservices with sync stock validation, Kafka notifications, JWT auth, and full observability across 16 Docker containers.',
+    tools: [
+      'Java',
+      'Spring Boot',
+      'Kafka',
+      'Spring Cloud Gateway',
+      'Keycloak',
+      'MySQL',
+      'MongoDB',
+    ],
+    github: 'https://github.com/kushisantu/micro-marketplace',
+    points: [
+      'Built an e-commerce platform (Product, Order, Inventory, Notification, API Gateway, Eureka) that validates stock synchronously before accepting orders, then publishes to Kafka for asynchronous notifications.',
+      'Added fault tolerance with Resilience4j, JWT auth via Keycloak, and observability with Prometheus, Grafana, and Zipkin, running on 16 Docker containers.',
+    ],
+  },
+  {
     name: 'Multi-Objective Carbon-Aware Logistics Routing',
     summary:
       'Freight routing that balances travel time and CO2 emissions, reducing estimated emissions by 20%.',
     tools: ['Python', 'PyTorch', 'PPO', 'DQN', 'OSMnx'],
+    github:
+      'https://github.com/kushisantu/Multi-Objective-Reinforcement-Learning-for-Carbon-Aware-Global-Logistics',
     points: [
       'Built a multi-objective reinforcement learning system using PPO, Double DQN, and Weighted A* to optimize freight routing while balancing travel time and CO2 emissions.',
       'Integrated real-world transportation, elevation, and emissions datasets to train and evaluate routing agents, reducing estimated emissions by 20% while adding only 5–10 minutes to ETA.',
@@ -81,37 +113,10 @@ export const projects = [
     summary:
       'Question answering across research papers, with citation-backed answers drawn from the documents.',
     tools: ['FastAPI', 'React', 'Gemini', 'LangChain', 'ChromaDB'],
+    github: 'https://github.com/kushisantu/research-rag',
     points: [
       'Built a RAG-based question-answering system for research papers using Gemini, embeddings, and vector search to support conversational querying across multiple documents.',
       'Engineered an end-to-end pipeline for PDF ingestion, semantic chunking, metadata-aware retrieval, and citation-backed answer generation.',
-    ],
-  },
-  {
-    name: 'Flight Price Tracker',
-    summary:
-      'A flight price aggregator on AWS that tracks fares across airlines and dates, with alerts and trend charts.',
-    tools: ['React', 'FastAPI', 'AWS', 'Docker', 'PostgreSQL', 'Chart.js'],
-    points: [
-      'Developed and deployed a full-stack flight aggregator on AWS (EC2, S3) with a Dockerized FastAPI backend and React frontend, integrating third-party APIs to track prices across multiple airlines and dates.',
-      'Implemented real-time price tracking, custom alerts, and interactive trend visualizations with Chart.js to help users identify cost-saving booking opportunities.',
-    ],
-  },
-  {
-    name: 'Micro Marketplace',
-    summary:
-      'E-commerce services for products, orders, inventory, and notifications, with event-driven updates and role-based authentication.',
-    tools: [
-      'Java',
-      'Spring Boot',
-      'Kafka',
-      'Spring Cloud Gateway',
-      'Keycloak',
-      'MySQL',
-      'MongoDB',
-    ],
-    points: [
-      'Designed and developed a scalable e-commerce microservices platform with modular Product, Order, Inventory, and Notification services, supporting real-time order processing and inventory updates through event-driven communication.',
-      'Implemented secure role-based authentication and system monitoring dashboards to ensure service reliability and performance.',
     ],
   },
   {
@@ -119,6 +124,7 @@ export const projects = [
     summary:
       'An AI tool that checks resumes for ATS compliance, finds keyword gaps, and builds PDF and Word resumes.',
     tools: ['Python', 'Streamlit', 'NLTK', 'spaCy'],
+    github: 'https://github.com/kushisantu/ai-resume-optimizer',
     points: [
       'Implemented an AI-powered tool in Python to analyze resumes for ATS compliance, implementing keyword gap detection, ATS scoring algorithms, and smart content suggestions.',
       'Integrated ATS-friendly customizable resume templates and automated PDF/Word generation using Streamlit and spaCy, reducing resume preparation time by 50%.',

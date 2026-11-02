@@ -390,14 +390,28 @@ function App() {
               <div className="project-copy">
                 <div className="project-heading">
                   <h3>{project.name}</h3>
-                  <button
-                    type="button"
-                    className="project-open"
-                    aria-label={`More about ${project.name}`}
-                    onClick={() => setOpenProject(project)}
-                  >
-                    <ExpandIcon />
-                  </button>
+                  <div className="project-actions">
+                    {'github' in project && project.github ? (
+                      <a
+                        className="project-open"
+                        href={project.github}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`View ${project.name} on GitHub`}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <GitHubIcon />
+                      </a>
+                    ) : null}
+                    <button
+                      type="button"
+                      className="project-open"
+                      aria-label={`More about ${project.name}`}
+                      onClick={() => setOpenProject(project)}
+                    >
+                      <ExpandIcon />
+                    </button>
+                  </div>
                 </div>
                 <p>{project.summary}</p>
                 <ul className="tech-list">
@@ -454,6 +468,17 @@ function App() {
                     <li key={tool}>{tool}</li>
                   ))}
                 </ul>
+                {'github' in openProject && openProject.github ? (
+                  <a
+                    className="project-github"
+                    href={openProject.github}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <GitHubIcon />
+                    View on GitHub
+                  </a>
+                ) : null}
               </div>
             </div>
           </div>

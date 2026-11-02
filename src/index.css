@@ -556,6 +556,13 @@ ul {
   padding-top: 0.15rem;
 }
 
+.project-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 .project-copy p,
 .project-points li {
   max-width: none;
@@ -579,10 +586,12 @@ ul {
     linear-gradient(#1c1e26, #1c1e26) padding-box,
     linear-gradient(135deg, var(--pink), var(--purple) 55%, var(--blue)) border-box;
   color: var(--pink);
+  text-decoration: none;
   cursor: pointer;
 }
 
-.project-open svg {
+.project-open svg,
+.project-open .contact-icon {
   width: 1.05rem;
   height: 1.05rem;
 }
@@ -595,6 +604,35 @@ ul {
 }
 
 .project-open:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 3px;
+}
+
+.project-github {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  margin-top: 0.15rem;
+  padding: 0.48rem 1rem;
+  border-radius: 8px;
+  background: var(--pink);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.project-github .contact-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.project-github:hover {
+  background: #ff5c9c;
+}
+
+.project-github:focus-visible {
   outline: 2px solid var(--pink);
   outline-offset: 3px;
 }
