@@ -5,7 +5,7 @@ export const sections = [
   { id: 'education', label: 'Education' },
   { id: 'athletics', label: 'Honors' },
   { id: 'skills', label: 'Skills' },
-  { id: 'blog', label: 'Blog' },
+  { id: 'blog', label: 'Writing' },
   { id: 'contact', label: 'Contact' },
 ] as const
 
@@ -14,54 +14,14 @@ export const navSections = sections.filter((section) => section.id !== 'hero')
 export const profile = {
   name: 'Kushi Santosh Khandoji',
   mark: 'KK',
-  tagline: 'Building intelligent software for real-world problems.',
+  tagline: 'I build AI agents, RAG systems, and the software that makes them useful.',
   paragraphs: [
-    'I’m a Computer Science graduate student at George Washington University focused on AI engineering, intelligent agents, and software development. I enjoy taking ideas from “could this work?” to something people can actually use, whether that means building an LLM-powered application, automating tasks with AI, designing an agent workflow, or engineering the software behind it.',
-    'I’m curious, hardworking, and relentlessly driven to improve. My background as both a computer scientist and competitive student-athlete has shaped how I approach challenges: with discipline, persistence, adaptability, and a strong bias toward getting things done.',
+    'CS master’s student at George Washington University and former NCAA Division II tennis athlete. I like taking ideas from “could this work?” to something people actually use, and I bring an athlete’s discipline to getting it shipped.',
   ],
   seekingLabel: 'Seeking opportunities in:',
   seeking: ['AI Engineering', 'Forward Deployed Engineering', 'Software Engineering'],
   resumeHref: '/Kushi_Khandoji_Resume.pdf',
   resumeLabel: 'View Resume',
-  exploreLabel: 'Explore',
-  orbitIcons: [
-    {
-      label: 'Builder',
-      code: '1f4bb',
-      size: '58%',
-      duration: '17s',
-      direction: 'normal',
-      delay: '-2s',
-      start: '40deg',
-    },
-    {
-      label: 'Athlete',
-      code: '1f3be',
-      size: '74%',
-      duration: '23s',
-      direction: 'reverse',
-      delay: '-9s',
-      start: '200deg',
-    },
-    {
-      label: 'Student',
-      code: '1f393',
-      size: '88%',
-      duration: '29s',
-      direction: 'normal',
-      delay: '-15s',
-      start: '310deg',
-    },
-    {
-      label: 'AI',
-      code: '1f916',
-      size: '100%',
-      duration: '21s',
-      direction: 'reverse',
-      delay: '-5s',
-      start: '110deg',
-    },
-  ],
 }
 
 export const experience = [
@@ -103,70 +63,66 @@ export const experience = [
   },
 ]
 
-export const projects = [
+export type Project = {
+  name: string
+  /** The featured project shows every paragraph; the rest show the first one. */
+  about: string[]
+  tools: string[]
+  github?: string
+  /** YouTube, Vimeo, Loom or Google Drive share link, or a direct .mp4/.webm file */
+  video?: string
+}
+
+export const projects: Project[] = [
+  {
+    name: 'AskWRI (AWS Breaking Barriers Hackathon Finalist)',
+    about: [
+      'AskWRI is an agentic research assistant built on 50 years of World Resources Institute research, and a finalist at the AWS Breaking Barriers Hackathon. It ingests the full PDF library, generates embeddings with Bedrock, and combines keyword and semantic retrieval in Aurora PostgreSQL with pgvector, so questions are answered from the research itself rather than a model’s guesswork.',
+      'On top of retrieval, MCP-powered agents return multilingual answers where every claim is backed by a citation, with Bedrock Guardrails keeping responses safe and on topic. In evaluation it reached 92.6% retrieval recall and 100% claim citation coverage, and the whole stack is provisioned with Terraform.',
+    ],
+    tools: ['Bedrock', 'AgentCore', 'Bedrock Guardrails', 'pgvector', 'Terraform'],
+    video: '/videos/askwri-demo.mp4',
+  },
   {
     name: 'Flight Fare Prediction & Analytics',
-    summary:
-      'Flight fare search and prediction from 30M+ U.S. DOT ticket records, with confidence-checked estimates across 400+ airports.',
-    tools: ['FastAPI', 'React', 'SQLite', 'NumPy', 'pytest'],
-    github: 'https://github.com/kushisantu/flight-price-tracker',
-    points: [
-      'Built a flight fare search application using React and Python/FastAPI, leveraging 30M+ U.S. Department of Transportation ticket records across 400+ airports to provide data-driven fare estimates.',
-      'Developed a fare prediction system on 8M unseen ticket records, achieving ~$97 average estimation error and capturing 81% of actual fares within predicted ranges; implemented confidence checks to prevent unreliable estimates.',
+    about: [
+      'Fare search and prediction built on 30M+ U.S. DOT ticket records across 400+ airports. On 8M unseen tickets, estimates land within about $97 on average, with confidence checks to hold back unreliable ones.',
     ],
+    tools: ['Python', 'FastAPI', 'React', 'NumPy', 'SQLite', 'pytest'],
+    github: 'https://github.com/kushisantu/flight-price-tracker',
   },
   {
     name: 'Micro Marketplace',
-    summary:
-      'E-commerce microservices with sync stock validation, Kafka notifications, JWT auth, and full observability across 16 Docker containers.',
-    tools: [
-      'Java',
-      'Spring Boot',
-      'Kafka',
-      'Spring Cloud Gateway',
-      'Keycloak',
-      'MySQL',
-      'MongoDB',
+    about: [
+      'E-commerce microservices that check stock before accepting orders, then publish to Kafka for async notifications. Keycloak JWT auth, Resilience4j fault tolerance, and full observability across 16 Docker containers.',
     ],
+    tools: ['Java', 'Spring Boot', 'Kafka', 'Keycloak', 'Docker', 'MongoDB'],
     github: 'https://github.com/kushisantu/micro-marketplace',
-    points: [
-      'Built an e-commerce platform (Product, Order, Inventory, Notification, API Gateway, Eureka) that validates stock synchronously before accepting orders, then publishes to Kafka for asynchronous notifications.',
-      'Added fault tolerance with Resilience4j, JWT auth via Keycloak, and observability with Prometheus, Grafana, and Zipkin, running on 16 Docker containers.',
-    ],
   },
   {
     name: 'Multi-Objective Carbon-Aware Logistics Routing',
-    summary:
-      'Freight routing that balances travel time and CO2 emissions, reducing estimated emissions by 20%.',
-    tools: ['Python', 'PyTorch', 'PPO', 'DQN', 'OSMnx'],
+    about: [
+      'Reinforcement learning for freight routing that balances travel time against CO2. Agents trained on real transport and emissions data cut estimated emissions by 20% for only 5–10 extra minutes.',
+    ],
+    tools: ['Python', 'PyTorch', 'PPO', 'Double DQN', 'Weighted A*', 'OSMnx'],
     github:
       'https://github.com/kushisantu/Multi-Objective-Reinforcement-Learning-for-Carbon-Aware-Global-Logistics',
-    points: [
-      'Built a multi-objective reinforcement learning system using PPO, Double DQN, and Weighted A* to optimize freight routing while balancing travel time and CO2 emissions.',
-      'Integrated real-world transportation, elevation, and emissions datasets to train and evaluate routing agents, reducing estimated emissions by 20% while adding only 5–10 minutes to ETA.',
-    ],
-  },
-  {
-    name: 'Research Paper Q&A Assistant',
-    summary:
-      'Question answering across research papers, with citation-backed answers drawn from the documents.',
-    tools: ['FastAPI', 'React', 'Gemini', 'LangChain', 'ChromaDB'],
-    github: 'https://github.com/kushisantu/research-rag',
-    points: [
-      'Built a RAG-based question-answering system for research papers using Gemini, embeddings, and vector search to support conversational querying across multiple documents.',
-      'Engineered an end-to-end pipeline for PDF ingestion, semantic chunking, metadata-aware retrieval, and citation-backed answer generation.',
-    ],
   },
   {
     name: 'AI Resume Optimizer',
-    summary:
-      'An AI tool that checks resumes for ATS compliance, finds keyword gaps, and builds PDF and Word resumes.',
+    about: [
+      'A Python tool that scores resumes for ATS compliance, spots keyword gaps, and generates ATS-friendly PDF and Word resumes, cutting prep time by 50%.',
+    ],
     tools: ['Python', 'Streamlit', 'NLTK', 'spaCy'],
     github: 'https://github.com/kushisantu/ai-resume-optimizer',
-    points: [
-      'Implemented an AI-powered tool in Python to analyze resumes for ATS compliance, implementing keyword gap detection, ATS scoring algorithms, and smart content suggestions.',
-      'Integrated ATS-friendly customizable resume templates and automated PDF/Word generation using Streamlit and spaCy, reducing resume preparation time by 50%.',
+  },
+  {
+    name: 'Research Paper Q&A Assistant',
+    about: [
+      'A RAG assistant for conversational Q&A across research papers, with semantic chunking, metadata-aware retrieval, and Gemini answers cited back to the source.',
     ],
+    tools: ['Gemini', 'LangChain', 'ChromaDB', 'FastAPI', 'React'],
+    github: 'https://github.com/kushisantu/research-rag',
   },
 ]
 
@@ -177,18 +133,19 @@ export const education = [
     place: 'Washington, DC',
     dates: 'Fall 2025 – Present',
     gpa: '3.83',
-    focus: ['Machine Learning', 'Generative AI', 'Trustworthy AI', 'Data Mining', 'Algorithms'],
+    focus: ['Machine Learning', 'Generative AI', 'Data Mining', 'Algorithms'],
     highlights: [
-      '3.83 cumulative GPA with a 3.90 first-semester GPA, with coursework spanning Machine Learning, Trustworthy AI, Algorithms, Systems, and Generative AI.',
-      'Pursuing graduate studies while competing with GW Club Tennis, with a focus on applying AI to real-world and business applications.',
+      '3.90 first-semester GPA, focused on applying AI to real-world problems.',
+      'Competing with GW Club Tennis alongside graduate studies.',
     ],
   },
   {
     school: 'Wilmington University',
-    credential: 'B.S. in Computer Science, Artificial Intelligence',
+    credential: 'B.S. in Computer Science (AI)',
     place: 'Wilmington, Delaware',
     dates: 'Graduated: May 2025',
     gpa: '4.00',
+    award: 'Undergraduate Technology Award',
     focus: [
       'Artificial Intelligence',
       'Machine Learning',
@@ -197,13 +154,23 @@ export const education = [
       'Databases',
     ],
     highlights: [
-      '4.00 GPA, Dean’s List, and recipient of the Undergraduate Technology Award while earning a B.S. in Computer Science with an AI concentration.',
-      'NCAA Division II tennis scholarship athlete and 2× CACC Champion, balancing collegiate athletics with a rigorous CS/AI curriculum.',
+      'Dean’s List every semester.',
+      'NCAA Division II tennis scholarship athlete and 2× CACC Champion.',
     ],
   },
 ]
 
 export const honors = [
+  {
+    label: 'AWS Breaking Barriers Hackathon Finalist',
+    when: '2026',
+    detail: 'Finalist with AskWRI, an agentic RAG assistant over 50 years of WRI research.',
+  },
+  {
+    label: 'Undergraduate Technology Award',
+    when: '2025',
+    detail: 'University award for top undergraduate student in current Computer Science cohort.',
+  },
   {
     label: 'CACC Conference Champions',
     when: '2023, 2024',
@@ -242,11 +209,6 @@ export const honors = [
     detail: 'Recognized for strong academic standing every undergraduate semester.',
   },
   {
-    label: 'Undergraduate Technology Award',
-    when: '2025',
-    detail: 'University award for top undergraduate student in current Computer Science cohort.',
-  },
-  {
     label: 'Calculus Award',
     when: '2023',
     detail: 'University award for top calculus student.',
@@ -258,118 +220,26 @@ export const honors = [
   },
 ]
 
-export const skillRows = [
-  [
-    'Python',
-    'Java',
-    'Kotlin',
-    'JavaScript',
-    'SQL',
-    'Bash',
-    'Git',
-    'React',
-    'Next.js',
-    'Chart.js',
-    'Docker',
-    'REST APIs',
-  ],
-  [
-    'Django',
-    'FastAPI',
-    'Spring Boot',
-    'Spring Cloud Gateway',
-    'Kafka',
-    'PostgreSQL',
-    'MySQL',
-    'MongoDB',
-    'Keycloak',
-    'Role-Based Authentication',
-    'AWS',
-    'EC2',
-    'S3',
-  ],
-  [
-    'PyTorch',
-    'TensorFlow',
-    'NumPy',
-    'LangChain',
-    'Gemini',
-    'Copilot Studio',
-    'Box AI',
-    'ChromaDB',
-    'LLMs',
-    'AI Agents',
-    'Prompt Engineering',
-    'RAG',
-    'Agent Orchestration',
-  ],
-  [
-    'Reinforcement Learning',
-    'Double DQN',
-    'Weighted A*',
-    'OPC UA',
-    'Data Mining',
-    'Model Training',
-    'Document Extraction',
-    'Similarity Search',
-    'Semantic Chunking',
-    'Human-in-the-Loop Review',
-    'Metadata-Aware Retrieval',
-    'Embedding-Based Feature Representations',
-  ],
-] as const
-
 export const skillGroups = [
+  {
+    name: 'AWS & Cloud',
+    skills: ['Bedrock', 'Bedrock Guardrails', 'AgentCore', 'EC2', 'S3', 'Terraform', 'Docker'],
+  },
+  {
+    name: 'AI / ML',
+    skills: ['LLMs', 'RAG', 'AI Agents', 'LangChain', 'PyTorch', 'TensorFlow', 'Reinforcement Learning', 'Gemini'],
+  },
   {
     name: 'Languages',
     skills: ['Python', 'Java', 'Kotlin', 'JavaScript', 'SQL', 'Bash'],
   },
   {
-    name: 'Frontend',
-    skills: ['React', 'Next.js', 'Chart.js'],
+    name: 'Backend & Data',
+    skills: ['FastAPI', 'Django', 'Spring Boot', 'Kafka', 'Keycloak', 'PostgreSQL', 'pgvector', 'MongoDB'],
   },
   {
-    name: 'Backend',
-    skills: ['Django', 'FastAPI', 'Spring Boot', 'Spring Cloud Gateway', 'REST APIs'],
-  },
-  {
-    name: 'Libraries',
-    skills: ['PyTorch', 'TensorFlow', 'NumPy', 'LangChain'],
-  },
-  {
-    name: 'Databases',
-    skills: ['PostgreSQL', 'MySQL', 'MongoDB', 'ChromaDB'],
-  },
-  {
-    name: 'AI Tools',
-    skills: ['Gemini', 'Copilot Studio', 'Box AI'],
-  },
-  {
-    name: 'AI Systems',
-    skills: ['LLMs', 'AI Agents', 'Prompt Engineering', 'RAG', 'Agent Orchestration'],
-  },
-  {
-    name: 'Document AI',
-    skills: [
-      'Document Extraction',
-      'Semantic Chunking',
-      'Similarity Search',
-      'Metadata-Aware Retrieval',
-      'Embedding-Based Feature Representations',
-      'Human-in-the-Loop Review',
-    ],
-  },
-  {
-    name: 'Machine Learning',
-    skills: ['Reinforcement Learning', 'Double DQN', 'Weighted A*', 'Data Mining', 'Model Training'],
-  },
-  {
-    name: 'Cloud & DevOps',
-    skills: ['AWS', 'EC2', 'S3', 'Docker', 'Git'],
-  },
-  {
-    name: 'Infra/Messaging/Auth',
-    skills: ['Kafka', 'Keycloak', 'Role-Based Authentication', 'OPC UA'],
+    name: 'Frontend & Tools',
+    skills: ['React', 'Next.js', 'Chart.js', 'Git'],
   },
 ] as const
 

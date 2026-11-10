@@ -1,4 +1,4 @@
-import { createElement, useEffect, useLayoutEffect, useRef, useState, type AllHTMLAttributes, type ChangeEvent, type CSSProperties, type FormEvent, type ReactNode } from 'react'
+import { createElement, useEffect, useRef, useState, type AllHTMLAttributes, type ChangeEvent, type CSSProperties, type FormEvent, type ReactNode } from 'react'
 import {
   contact,
   education,
@@ -10,7 +10,7 @@ import {
   projects,
   sections,
 } from './data/content.ts'
-import { SkillMarquee } from './SkillMarquee.tsx'
+import { SkillGrid } from './SkillGrid.tsx'
 
 type SectionId = (typeof sections)[number]['id']
 
@@ -39,134 +39,63 @@ function sectionInView(): SectionId {
   return current
 }
 
-type Project = (typeof projects)[number]
+function videoEmbedUrl(url: string) {
+  const youtube = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/)
+  if (youtube) return `https://www.youtube-nocookie.com/embed/${youtube[1]}?rel=0`
+  const vimeo = url.match(/vimeo\.com\/(?:video\/)?(\d+)/)
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`
+  const loom = url.match(/loom\.com\/(?:share|embed)\/([\w-]+)/)
+  if (loom) return `https://www.loom.com/embed/${loom[1]}`
+  const drive = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/)
+  if (drive) return `https://drive.google.com/file/d/${drive[1]}/preview`
+  return null
+}
 
-function ExperienceTimeline() {
-  const trackRef = useRef<HTMLDivElement>(null)
-  const [ready, setReady] = useState(false)
-  const [shown, setShown] = useState<boolean[]>(() => experience.map(() => false))
-
-  useLayoutEffect(() => {
-    const track = trackRef.current
-    if (!track) return
-    const node = track
-
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    function measure(node: HTMLDivElement) {
-      const dots = node.querySelectorAll<HTMLElement>('.timeline-dot')
-      if (dots.length === 0) return
-      const trackRect = node.getBoundingClientRect()
-      const first = dots[0].getBoundingClientRect()
-      const last = dots[dots.length - 1].getBoundingClientRect()
-      const top = first.top + first.height / 2 - trackRect.top
-      const height = last.top + last.height / 2 - trackRect.top - top
-      node.style.setProperty('--rail-top', `${top}px`)
-      node.style.setProperty('--rail-height', `${height}px`)
-      if (reduce) node.style.setProperty('--drawn', `${height}px`)
-    }
-
-    function draw(node: HTMLDivElement) {
-      if (reduce) return
-      const dots = node.querySelectorAll<HTMLElement>('.timeline-dot')
-      if (dots.length === 0) return
-      const trackRect = node.getBoundingClientRect()
-      const first = dots[0].getBoundingClientRect()
-      const last = dots[dots.length - 1].getBoundingClientRect()
-      const top = first.top + first.height / 2 - trackRect.top
-      const end = last.top + last.height / 2 - trackRect.top
-      const reach = window.innerHeight * 0.62 - trackRect.top
-      const drawn = Math.min(Math.max(end - top, 0), Math.max(0, reach - top))
-      node.style.setProperty('--drawn', `${drawn}px`)
-    }
-
-    measure(node)
-    draw(node)
-
-    const resizeObserver = new ResizeObserver(() => {
-      measure(node)
-      draw(node)
-    })
-    resizeObserver.observe(node)
-
-    if (reduce) {
-      setReady(true)
-      setShown(experience.map(() => true))
-      return () => resizeObserver.disconnect()
-    }
-
-    const items = [...node.querySelectorAll<HTMLElement>('.timeline-item')]
-
-    function revealItems() {
-      const visible = items.some(
-        (item) => item.getBoundingClientRect().top < window.innerHeight - 40,
-      )
-      if (!visible) return
-      setReady(true)
-      setShown((current) => {
-        const next = [...current]
-        let changed = false
-        items.forEach((item, index) => {
-          if (next[index]) return
-          if (item.getBoundingClientRect().top < window.innerHeight - 40) {
-            next[index] = true
-            changed = true
-          }
-        })
-        return changed ? next : current
-      })
-    }
-
-    function onScroll() {
-      draw(node)
-      revealItems()
-    }
-
-    revealItems()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-
-    return () => {
-      resizeObserver.disconnect()
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-    }
-  }, [])
-
+function ProjectVideo({ url, title }: { url: string; title: string }) {
+  const embed = videoEmbedUrl(url)
   return (
-    <div className={ready ? 'timeline is-ready' : 'timeline'} ref={trackRef}>
-      <div className="timeline-rail" aria-hidden="true" />
-      <div className="timeline-line" aria-hidden="true" />
-      {experience.map((job, index) => {
-        const side = index % 2 === 0 ? 'is-left' : 'is-right'
-        const place = 'place' in job ? job.place : ''
-        return (
-          <article
-            className={`timeline-item ${side}${shown[index] ? ' is-shown' : ''}`}
-            key={job.role}
-          >
-            <div className="timeline-card">
-              <p className="timeline-dates">{job.dates}</p>
-              <h3>{job.role}</h3>
-              <p className="timeline-org">{job.org}</p>
-              {place ? <p className="timeline-place">{place}</p> : null}
-              <ul className="tech-list">
-                {job.tools.split(', ').map((tool) => (
-                  <li key={tool}>{tool}</li>
-                ))}
-              </ul>
-              <ul className="timeline-points">
-                {job.points.map((point) => (
-                  <li key={point}>{point}</li>
-                ))}
-              </ul>
-            </div>
-            <span className="timeline-stem" aria-hidden="true" />
-            <span className="timeline-dot" aria-hidden="true" />
-          </article>
-        )
-      })}
+    <div className="project-video">
+      {embed ? (
+        <iframe
+          src={embed}
+          title={`${title} demo`}
+          loading="lazy"
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowFullScreen
+        />
+      ) : (
+        // Without a start offset, some browsers show a black box instead of the first frame.
+        <video src={`${url}#t=0.1`} controls preload="metadata" playsInline>
+          <a href={url}>Watch the {title} demo</a>
+        </video>
+      )}
     </div>
+  )
+}
+
+function TechList({ tools }: { tools: readonly string[] }) {
+  return (
+    <ul className="tech-list">
+      {tools.map((tool) => (
+        <li key={tool}>{tool}</li>
+      ))}
+    </ul>
+  )
+}
+
+function GitHubLink({ href, name, compact }: { href: string; name: string; compact?: boolean }) {
+  return (
+    <a
+      className={compact ? 'project-link is-compact' : 'project-link'}
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`${name} on GitHub`}
+      title={compact ? 'View on GitHub' : undefined}
+    >
+      <GitHubIcon />
+      {compact ? null : 'GitHub'}
+    </a>
   )
 }
 
@@ -228,10 +157,10 @@ function Rise({
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeId, setActiveId] = useState<SectionId>('hero')
-  const [openProject, setOpenProject] = useState<Project | null>(null)
   const [showAllProjects, setShowAllProjects] = useState(false)
   const lockedId = useRef<SectionId | null>(null)
-  const closeProjectRef = useRef<HTMLButtonElement>(null)
+  const [featured, ...otherProjects] = projects
+  const listedProjects = showAllProjects ? otherProjects : otherProjects.slice(0, 4)
 
   useEffect(() => {
     function sync() {
@@ -260,24 +189,6 @@ function App() {
     }
   }, [])
 
-  useEffect(() => {
-    if (!openProject) return
-    const previous = document.activeElement
-    closeProjectRef.current?.focus()
-    document.body.style.overflow = 'hidden'
-
-    function onKey(event: KeyboardEvent) {
-      if (event.key === 'Escape') setOpenProject(null)
-    }
-
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = ''
-      if (previous instanceof HTMLElement) previous.focus()
-    }
-  }, [openProject])
-
   function selectSection(id: SectionId) {
     lockedId.current = id
     setActiveId(id)
@@ -292,30 +203,14 @@ function App() {
           if (event.key === 'Escape') setMenuOpen(false)
         }}
       >
-        <div className="header-bar">
-          <a
-            className="brand"
-            href="#hero"
-            aria-label={profile.name}
-            onClick={() => selectSection('hero')}
-          >
-            {profile.mark}
-          </a>
-          <button
-            type="button"
-            className="menu-button"
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-            aria-controls="site-nav"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            <span className="menu-icon" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </span>
-          </button>
-        </div>
+        <a
+          className="brand"
+          href="#hero"
+          aria-label={profile.name}
+          onClick={() => selectSection('hero')}
+        >
+          {profile.mark}
+        </a>
         <nav id="site-nav" aria-label="Page sections">
           <ul className="nav-list">
             {navSections.map((section) => (
@@ -331,6 +226,23 @@ function App() {
             ))}
           </ul>
         </nav>
+        <div className="header-tools">
+          <ThemeToggle />
+          <button
+            type="button"
+            className="menu-button"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            aria-controls="site-nav"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span className="menu-icon" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
+          </button>
+        </div>
       </header>
 
       <section id="hero">
@@ -353,186 +265,117 @@ function App() {
             </ul>
           </Rise>
           <Rise as="p" className="hero-actions">
-            <a href={profile.resumeHref} target="_blank" rel="noreferrer">
+            <a
+              className="button-primary"
+              href={profile.resumeHref}
+              target="_blank"
+              rel="noreferrer"
+            >
               {profile.resumeLabel}
             </a>
-            <span className="hero-dot" aria-hidden="true">
-              ·
-            </span>
-            <a href="#experience" onClick={() => selectSection('experience')}>
-              {profile.exploreLabel}
+            <a className="button-secondary" href={contact.linkedin} target="_blank" rel="noreferrer">
+              <LinkedInIcon />
+              LinkedIn
+            </a>
+            <a className="button-secondary" href={contact.github} target="_blank" rel="noreferrer">
+              <GitHubIcon />
+              GitHub
             </a>
           </Rise>
         </div>
-        <Rise className="hero-stage" delay="0.42s">
-          <div className="hero-orbit" aria-hidden="true">
-            <span className="orbit-glow" />
-            <span className="orbit-core">
-              <span className="hero-mark">{profile.mark}</span>
-            </span>
-            {profile.orbitIcons.map((item) => (
-              <span
-                className="orbit-path"
-                key={item.label}
-                style={
-                  {
-                    '--orbit-size': item.size,
-                    '--orbit-duration': item.duration,
-                    '--orbit-direction': item.direction,
-                    '--orbit-delay': item.delay,
-                    '--orbit-start': item.start,
-                  } as CSSProperties
-                }
-              >
-                <span className="orbit-ring" />
-                <span className="orbit-spin">
-                  <span className="orbit-item">
-                    <img
-                      className="orbit-icon"
-                      src={`https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/img/apple/64/${item.code}.png`}
-                      alt=""
-                      width={40}
-                      height={40}
-                      decoding="async"
-                    />
-                  </span>
-                </span>
-              </span>
-            ))}
-          </div>
-        </Rise>
       </section>
 
       <section id="experience">
         <Rise as="h2">Experience</Rise>
-        <ExperienceTimeline />
+        <Rise className="row-panel">
+          {experience.map((job) => (
+            <article className="exp-row" key={job.role}>
+              <div className="exp-meta">
+                <p className="exp-dates">{job.dates}</p>
+                <p className="exp-place">{job.place}</p>
+              </div>
+              <div className="exp-body">
+                <h3>{job.role}</h3>
+                <p className="exp-org">{job.org}</p>
+                <ul className="exp-points">
+                  {job.points.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+                <TechList tools={job.tools.split(', ')} />
+              </div>
+            </article>
+          ))}
+        </Rise>
       </section>
 
       <section id="projects">
         <Rise as="h2">Projects</Rise>
-        <div className="project-grid">
-          {(showAllProjects ? projects : projects.slice(0, 3)).map((project, index) => (
-            <Rise
-              as="article"
-              className="project-card"
-              key={project.name}
-              delay={index % 3 === 0 ? undefined : `${(index % 3) * 90}ms`}
-            >
-              <div className="project-copy">
-                <div className="project-heading">
-                  <h3>{project.name}</h3>
-                  <div className="project-actions">
-                    {'github' in project && project.github ? (
-                      <a
-                        className="project-open"
-                        href={project.github}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={`View ${project.name} on GitHub`}
-                        onClick={(event) => event.stopPropagation()}
-                      >
-                        <GitHubIcon />
-                      </a>
-                    ) : null}
-                    <button
-                      type="button"
-                      className="project-open"
-                      aria-label={`More about ${project.name}`}
-                      onClick={() => setOpenProject(project)}
-                    >
-                      <ExpandIcon />
-                    </button>
-                  </div>
-                </div>
-                <p>{project.summary}</p>
-                <ul className="tech-list">
-                  {project.tools.map((tool) => (
-                    <li key={tool}>{tool}</li>
-                  ))}
-                </ul>
-              </div>
-            </Rise>
-          ))}
-        </div>
-        <Rise
-          as="button"
-          type="button"
-          className="project-more"
-          aria-expanded={showAllProjects}
-          onClick={() => setShowAllProjects((open) => !open)}
-        >
-          {showAllProjects ? 'Show less' : 'Show more'}
-        </Rise>
-        {openProject ? (
-          <div
-            className="project-backdrop"
-            onClick={() => setOpenProject(null)}
-          >
-            <div
-              className="project-dialog"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="project-dialog-title"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <div className="project-copy">
-                <div className="project-heading">
-                  <h3 id="project-dialog-title">{openProject.name}</h3>
-                  <button
-                    ref={closeProjectRef}
-                    type="button"
-                    className="project-open"
-                    aria-label="Close project details"
-                    onClick={() => setOpenProject(null)}
-                  >
-                    <CloseIcon />
-                  </button>
-                </div>
-                <p>{openProject.summary}</p>
-                <ul className="project-points">
-                  {openProject.points.map((point) => (
-                    <li key={point}>{point}</li>
-                  ))}
-                </ul>
-                <ul className="tech-list">
-                  {openProject.tools.map((tool) => (
-                    <li key={tool}>{tool}</li>
-                  ))}
-                </ul>
-                {'github' in openProject && openProject.github ? (
-                  <a
-                    className="project-github"
-                    href={openProject.github}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <GitHubIcon />
-                    View on GitHub
-                  </a>
-                ) : null}
-              </div>
+        <Rise className="project-panel">
+          <article className="featured-project">
+            <div className="featured-copy">
+              <p className="project-eyebrow">Featured project</p>
+              <h3>{featured.name}</h3>
+              {featured.about.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              <TechList tools={featured.tools} />
+              {featured.github ? <GitHubLink href={featured.github} name={featured.name} /> : null}
             </div>
+            {featured.video ? <ProjectVideo url={featured.video} title={featured.name} /> : null}
+          </article>
+          <div className="project-cells">
+            {listedProjects.map((project) => (
+              <article className="project-cell" key={project.name}>
+                <div className="project-cell-head">
+                  <h3>{project.name}</h3>
+                  {project.github ? (
+                    <GitHubLink href={project.github} name={project.name} compact />
+                  ) : null}
+                </div>
+                <p>{project.about[0]}</p>
+                <TechList tools={project.tools} />
+              </article>
+            ))}
           </div>
+        </Rise>
+        {otherProjects.length > 4 ? (
+          <Rise
+            as="button"
+            type="button"
+            className="project-more"
+            aria-expanded={showAllProjects}
+            onClick={() => setShowAllProjects((open) => !open)}
+          >
+            {showAllProjects ? 'Show less' : 'Show more'}
+          </Rise>
         ) : null}
       </section>
 
       <section id="education">
         <Rise as="h2">Education</Rise>
-        <div className="edu-grid">
-          {education.map((school, index) => (
-            <Rise
-              as="article"
-              className="edu-card"
-              key={school.school}
-              delay={index % 2 === 1 ? '90ms' : undefined}
-            >
-              <h3>{school.school}</h3>
-              <p className="edu-degree">{school.credential}</p>
-              <p className="edu-meta">{school.place}</p>
-              <p className="edu-dates">{school.dates}</p>
-              <p className="edu-gpa">
-                GPA: <span className="edu-gpa-value">{school.gpa}</span>
-              </p>
+        <Rise className="edu-grid">
+          {education.map((school) => (
+            <article className="edu-card" key={school.school}>
+              <div className="edu-head">
+                <div>
+                  <h3>{school.school}</h3>
+                  <p className="edu-degree">{school.credential}</p>
+                  <p className="edu-meta">{school.place}</p>
+                </div>
+                <div className="edu-side">
+                  <p className="edu-dates">{school.dates}</p>
+                  <p className="edu-gpa">
+                    GPA <span className="edu-gpa-value">{school.gpa}</span>
+                  </p>
+                  {'award' in school ? (
+                    <p className="edu-award">
+                      <AwardIcon />
+                      {school.award}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
               <p className="edu-kicker">Focus areas</p>
               <ul className="tech-list">
                 {school.focus.map((item) => (
@@ -545,57 +388,52 @@ function App() {
                   <li key={point}>{point}</li>
                 ))}
               </ul>
-            </Rise>
+            </article>
           ))}
-        </div>
+        </Rise>
       </section>
 
       <section id="athletics">
         <Rise as="h2">Honors</Rise>
         <Rise as="p" className="honor-lead">
-          NCAA Division II women's tennis and academic honors.
+          Hackathon, NCAA Division II women's tennis, and academic honors.
         </Rise>
-        <div className="honor-grid">
-          {honors.map((item, index) => (
-            <Rise
-              as="article"
-              className="honor-card"
-              key={item.label}
-              delay={index % 2 === 1 ? '90ms' : undefined}
-            >
+        <Rise className="honor-grid">
+          {honors.map((item) => (
+            <article className="honor-card" key={item.label}>
               <div className="honor-card-top">
                 <span className="honor-label">{item.label}</span>
                 {item.when ? <span className="honor-when">{item.when}</span> : null}
               </div>
               <p>{item.detail}</p>
-            </Rise>
+            </article>
           ))}
-        </div>
+        </Rise>
       </section>
 
       <section id="skills">
         <Rise as="h2">Skills</Rise>
         <Rise>
-          <SkillMarquee />
+          <SkillGrid />
         </Rise>
       </section>
 
       <section id="blog">
-        <Rise as="h2">Blog</Rise>
-        <div className="blog-grid">
-        {posts.map((post) => (
-          <Rise as="article" className="blog-card" key={post.href}>
-            <div className="blog-copy">
-              <p className="blog-date">{post.date}</p>
-              <h3>{post.title}</h3>
-              <p>{post.summary}</p>
-            </div>
-            <a className="blog-open" href={post.href} target="_blank" rel="noreferrer">
-              Open
-            </a>
-          </Rise>
-        ))}
-        </div>
+        <Rise as="h2">Writing</Rise>
+        <Rise className="blog-list">
+          {posts.map((post) => (
+            <article className="blog-card" key={post.href}>
+              <div className="blog-copy">
+                <p className="blog-date">{post.date}</p>
+                <h3>{post.title}</h3>
+                <p>{post.summary}</p>
+              </div>
+              <a className="blog-open" href={post.href} target="_blank" rel="noreferrer">
+                Read on Medium
+              </a>
+            </article>
+          ))}
+        </Rise>
       </section>
 
       <section id="contact">
@@ -722,6 +560,71 @@ function ContactForm() {
   )
 }
 
+type Theme = 'light' | 'dark'
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState<Theme>(() =>
+    document.documentElement.dataset.theme === 'light' ? 'light' : 'dark',
+  )
+  const next: Theme = theme === 'dark' ? 'light' : 'dark'
+
+  function toggle() {
+    document.documentElement.dataset.theme = next
+    try {
+      localStorage.setItem('theme', next)
+    } catch {
+      // Storage can be blocked (e.g. private mode); the theme still applies for this visit.
+    }
+    setTheme(next)
+  }
+
+  return (
+    <button
+      type="button"
+      className="theme-toggle"
+      aria-label={`Switch to ${next} theme`}
+      title={`Switch to ${next} theme`}
+      onClick={toggle}
+    >
+      {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+    </button>
+  )
+}
+
+function SunIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" fill="currentColor" />
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"
+      />
+    </svg>
+  )
+}
+
+function MoonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a7 7 0 0 0 10.7 10.7z" />
+    </svg>
+  )
+}
+
+function AwardIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M12 2a6 6 0 0 0-3.6 10.8L7 22l5-2.6 5 2.6-1.4-9.2A6 6 0 0 0 12 2zm0 2.2a3.8 3.8 0 1 1 0 7.6 3.8 3.8 0 0 1 0-7.6z"
+      />
+    </svg>
+  )
+}
+
 function PinIcon() {
   return (
     <svg className="contact-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -761,28 +664,6 @@ function GitHubIcon() {
       <path
         fill="currentColor"
         d="M12 .5A12 12 0 0 0 8.2 23.8c.6.1.8-.3.8-.6v-2.1c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.7-1.3-1.7-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.2 4.8 18.2 5.1 18.2 5.1c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"
-      />
-    </svg>
-  )
-}
-
-function ExpandIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M5 5h6v2H7v4H5V5zm8 0h6v6h-2V7h-4V5zM5 13h2v4h4v2H5v-6zm12 4v-4h2v6h-6v-2h4z"
-      />
-    </svg>
-  )
-}
-
-function CloseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="m6.4 5 5.6 5.6L17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5z"
       />
     </svg>
   )
