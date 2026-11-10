@@ -3,7 +3,7 @@ import {
   contact,
   education,
   experience,
-  honors,
+  achievements,
   navSections,
   posts,
   profile,
@@ -290,11 +290,11 @@ function App() {
         <Rise className="row-panel">
           {experience.map((job) => (
             <article className="exp-row" key={job.role}>
-              <div className="exp-meta">
-                <p className="exp-dates">{job.dates}</p>
-                <p className="exp-place">{job.place}</p>
-              </div>
               <div className="exp-body">
+                <p className="exp-meta">
+                  <span className="exp-dates">{job.dates}</span>
+                  <span className="exp-place">{job.place}</span>
+                </p>
                 <h3>{job.role}</h3>
                 <p className="exp-org">{job.org}</p>
                 <ul className="exp-points">
@@ -394,12 +394,12 @@ function App() {
       </section>
 
       <section id="athletics">
-        <Rise as="h2">Honors</Rise>
+        <Rise as="h2">Achievements</Rise>
         <Rise as="p" className="honor-lead">
           Hackathon, NCAA Division II women's tennis, and academic honors.
         </Rise>
         <Rise className="honor-grid">
-          {honors.map((item) => (
+          {achievements.map((item) => (
             <article className="honor-card" key={item.label}>
               <div className="honor-card-top">
                 <span className="honor-label">{item.label}</span>

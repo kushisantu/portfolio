@@ -3,7 +3,7 @@ export const sections = [
   { id: 'experience', label: 'Experience' },
   { id: 'projects', label: 'Projects' },
   { id: 'education', label: 'Education' },
-  { id: 'athletics', label: 'Honors' },
+  { id: 'athletics', label: 'Achievements' },
   { id: 'skills', label: 'Skills' },
   { id: 'blog', label: 'Writing' },
   { id: 'contact', label: 'Contact' },
@@ -160,7 +160,7 @@ export const education = [
   },
 ]
 
-export const honors = [
+export const achievements = [
   {
     label: 'AWS Breaking Barriers Hackathon Finalist',
     when: '2026',
