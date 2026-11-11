@@ -106,18 +106,22 @@ function useRise<T extends HTMLElement>() {
   useEffect(() => {
     const element = ref.current
     if (!element) return
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    function check() {
-      if (reduce || element!.getBoundingClientRect().top < window.innerHeight - 24) {
-        setShown(true)
-        window.removeEventListener('scroll', check)
-      }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setShown(true)
+      return
     }
 
-    check()
-    window.addEventListener('scroll', check, { passive: true })
-    return () => window.removeEventListener('scroll', check)
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px' },
+    )
+    observer.observe(element)
+    return () => observer.disconnect()
   }, [])
 
   return { ref, shown }
@@ -352,6 +356,13 @@ function App() {
         ) : null}
       </section>
 
+      <section id="skills">
+        <Rise as="h2">Skills</Rise>
+        <Rise>
+          <SkillGrid />
+        </Rise>
+      </section>
+
       <section id="education">
         <Rise as="h2">Education</Rise>
         <Rise className="edu-grid">
@@ -411,45 +422,41 @@ function App() {
         </Rise>
       </section>
 
-      <section id="skills">
-        <Rise as="h2">Skills</Rise>
-        <Rise>
-          <SkillGrid />
-        </Rise>
-      </section>
-
       <section id="blog">
         <Rise as="h2">Writing</Rise>
         <Rise className="blog-list">
           {posts.map((post) => (
             <article className="blog-card" key={post.href}>
-              <div className="blog-copy">
-                <p className="blog-date">{post.date}</p>
-                <h3>{post.title}</h3>
+              <div className="blog-top">
+                <div className="blog-heading">
+                  <p className="blog-date">{post.date}</p>
+                  <h3>{post.title}</h3>
+                </div>
+                <div className="blog-action">
+                  <a className="blog-open" href={post.href} target="_blank" rel="noreferrer">
+                    Read on Medium
+                  </a>
+                </div>
+              </div>
+              <div className="blog-summary">
                 <p>{post.summary}</p>
               </div>
-              <a className="blog-open" href={post.href} target="_blank" rel="noreferrer">
-                Read on Medium
-              </a>
             </article>
           ))}
         </Rise>
       </section>
 
       <section id="contact">
+        <Rise as="h2">Contact</Rise>
         <div className="contact-layout">
           <Rise>
-            <h2>Contact</h2>
             <ul className="contact-list">
               <li>
                 <PinIcon />
                 <span>{contact.location}</span>
               </li>
               <li>
-                <a href={`mailto:${contact.email}`}>
-                  <MailIcon />
-                  <span>{contact.email}</span>
-                </a>
+                <EmailLink />
               </li>
               <li>
                 <a href={contact.linkedin} target="_blank" rel="noreferrer">
@@ -468,16 +475,90 @@ function App() {
           <ContactForm />
         </div>
       </section>
+
+      <footer className="site-footer">
+        <p className="footer-copy">
+          © {new Date().getFullYear()} {profile.name}
+        </p>
+        <ul className="footer-social">
+          <li>
+            <a href={`mailto:${contact.email}`} aria-label="Email" title="Email">
+              <MailIcon />
+            </a>
+          </li>
+          <li>
+            <a href={contact.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" title="LinkedIn">
+              <LinkedInIcon />
+            </a>
+          </li>
+          <li>
+            <a href={contact.github} target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub">
+              <GitHubIcon />
+            </a>
+          </li>
+        </ul>
+        <a className="footer-top" href="#hero" onClick={() => selectSection('hero')}>
+          Back to top
+          <span aria-hidden="true">↑</span>
+        </a>
+      </footer>
     </div>
+  )
+}
+
+function EmailLink() {
+  const [copied, setCopied] = useState(false)
+  const resetTimer = useRef<number | undefined>(undefined)
+
+  useEffect(() => () => window.clearTimeout(resetTimer.current), [])
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(contact.email)
+    } catch {
+      return
+    }
+    setCopied(true)
+    window.clearTimeout(resetTimer.current)
+    resetTimer.current = window.setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <>
+      <a href={`mailto:${contact.email}`}>
+        <MailIcon />
+        <span>{contact.email}</span>
+      </a>
+      <button
+        type="button"
+        className={copied ? 'contact-copy is-copied' : 'contact-copy'}
+        onClick={copy}
+        aria-label="Copy email address"
+        title={copied ? 'Copied!' : 'Copy email'}
+      >
+        {copied ? <CheckIcon /> : <CopyIcon />}
+      </button>
+      <span className="visually-hidden" aria-live="polite">
+        {copied ? 'Email address copied to clipboard' : ''}
+      </span>
+    </>
   )
 }
 
 const contactFields = [
   { name: 'name', label: 'Name', type: 'text', placeholder: 'Your full name', error: 'Name is required' },
   { name: 'email', label: 'Email', type: 'email', placeholder: 'your.email@example.com', error: 'Email is required' },
-  { name: 'subject', label: 'Subject', type: 'text', placeholder: "What's this about?", error: 'Subject is required' },
+  {
+    name: 'subject',
+    label: 'Subject',
+    type: 'text',
+    placeholder: "What's this about?",
+    error: 'Subject is required',
+    wide: true,
+  },
   {
     name: 'message',
+    wide: true,
     label: 'Message',
     type: 'textarea',
     placeholder: 'Tell me about your project or opportunity...',
@@ -517,11 +598,11 @@ function ContactForm() {
     <form
       ref={formRef}
       className={formShown ? 'contact-form rise is-in' : 'contact-form rise'}
+      aria-label="Send me a message"
       noValidate
       onSubmit={onSubmit}
       style={{ transitionDelay: '90ms' }}
     >
-      <h3>Connect with me</h3>
       {contactFields.map((field) => {
         const error = field.name === 'email' ? emailError : ''
         const inputId = `contact-${field.name}`
@@ -540,10 +621,8 @@ function ContactForm() {
         }
 
         return (
-          <div className="contact-field" key={field.name}>
-            <label htmlFor={inputId}>
-              {field.label} <span aria-hidden="true">*</span>
-            </label>
+          <div className={'wide' in field ? 'contact-field is-wide' : 'contact-field'} key={field.name}>
+            <label htmlFor={inputId}>{field.label}</label>
             {field.type === 'textarea' ? <textarea {...shared} rows={5} /> : <input {...shared} type={field.type} />}
             {error ? (
               <p className="contact-error" id={errorId} role="alert">
@@ -553,9 +632,12 @@ function ContactForm() {
           </div>
         )
       })}
-      <button className="contact-submit" type="submit" disabled={!ready}>
-        Connect!
-      </button>
+      <div className="contact-actions">
+        <button className="contact-submit" type="submit" disabled={!ready}>
+          Send message
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
     </form>
   )
 }
@@ -669,6 +751,23 @@ function GitHubIcon() {
         fill="currentColor"
         d="M12 .5A12 12 0 0 0 8.2 23.8c.6.1.8-.3.8-.6v-2.1c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.7-1.3-1.7-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.2 4.8 18.2 5.1 18.2 5.1c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"
       />
+    </svg>
+  )
+}
+
+function CopyIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path fill="none" stroke="currentColor" strokeWidth="2" d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+    </svg>
+  )
+}
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="m5 12.5 4.5 4.5L19 7.5" />
     </svg>
   )
 }

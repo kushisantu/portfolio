@@ -2,9 +2,9 @@ export const sections = [
   { id: 'hero', label: 'Hero' },
   { id: 'experience', label: 'Experience' },
   { id: 'projects', label: 'Projects' },
+  { id: 'skills', label: 'Skills' },
   { id: 'education', label: 'Education' },
   { id: 'athletics', label: 'Achievements' },
-  { id: 'skills', label: 'Skills' },
   { id: 'blog', label: 'Writing' },
   { id: 'contact', label: 'Contact' },
 ] as const
@@ -21,7 +21,7 @@ export const profile = {
   seekingLabel: 'Seeking opportunities in:',
   seeking: ['AI Engineering', 'Forward Deployed Engineering', 'Software Engineering'],
   resumeHref: '/Kushi_Khandoji_Resume.pdf',
-  resumeLabel: 'View Resume',
+  resumeLabel: 'Resume',
 }
 
 export const experience = [
