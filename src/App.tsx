@@ -581,12 +581,16 @@ function ThemeToggle() {
   return (
     <button
       type="button"
+      role="switch"
       className="theme-toggle"
-      aria-label={`Switch to ${next} theme`}
+      aria-checked={theme === 'light'}
+      aria-label="Light theme"
       title={`Switch to ${next} theme`}
       onClick={toggle}
     >
-      {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+      <span className="theme-toggle-thumb">
+        {theme === 'light' ? <SunIcon /> : <MoonIcon />}
+      </span>
     </button>
   )
 }
